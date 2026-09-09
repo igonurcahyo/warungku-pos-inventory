@@ -1,7 +1,66 @@
 import { useState } from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { UserPlus, Eye, EyeOff } from 'lucide-react'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { UserPlus, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { WarungkuLogo } from '@/components/warungku-logo'
+import { createServerFn } from '@tanstack/react-start'
+import { db } from '@/db'
+import { users, stores } from '@/db/schema'
+import { hash } from '@node-rs/argon2'
+
+export const registerWarungFn = createServerFn({ method: 'POST' })
+  .validator((data: any) => data)
+  .handler(async ({ data }) => {
+    const {
+      namaLengkap,
+      namaWarung,
+      whatsapp,
+      email,
+      password,
+      confirmPassword,
+    } = data
+
+    if (!namaLengkap || !namaWarung || !whatsapp || !email || !password) {
+      throw new Error('Semua field wajib diisi')
+    }
+    if (password !== confirmPassword) {
+      throw new Error('Konfirmasi kata sandi tidak cocok')
+    }
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      throw new Error('Format email tidak valid')
+    }
+
+    const passwordHash = await hash(password)
+
+    try {
+      await db.transaction(async (tx) => {
+        const [newUser] = await tx
+          .insert(users)
+          .values({
+            name: namaLengkap,
+            whatsapp,
+            email,
+            passwordHash,
+          })
+          .returning({ id: users.id })
+
+        await tx.insert(stores).values({
+          ownerId: newUser.id,
+          name: namaWarung,
+        })
+      })
+
+      return { success: true }
+    } catch (error: any) {
+      if (
+        error.code === '23505' ||
+        error.message?.includes('users_email_unique')
+      ) {
+        throw new Error('Email sudah terdaftar')
+      }
+      console.error('Registration error:', error)
+      throw new Error('Gagal melakukan pendaftaran. Silakan coba lagi.')
+    }
+  })
 
 export const Route = createFileRoute('/register')({
   component: RegisterWarung,
@@ -20,6 +79,7 @@ export const Route = createFileRoute('/register')({
 })
 
 function RegisterWarung() {
+  const router = useRouter()
   const [namaLengkap, setNamaLengkap] = useState('')
   const [namaWarung, setNamaWarung] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
@@ -29,9 +89,37 @@ function RegisterWarung() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  function handleSubmit(e: React.FormEvent) {
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    // UI-only — no backend registration
+    if (password !== confirmPassword) {
+      setErrorMsg('Konfirmasi kata sandi tidak cocok')
+      return
+    }
+
+    setIsLoading(true)
+    setErrorMsg('')
+
+    try {
+      await registerWarungFn({
+        data: {
+          namaLengkap,
+          namaWarung,
+          whatsapp,
+          email,
+          password,
+          confirmPassword,
+        },
+      })
+
+      router.navigate({ to: '/login' })
+    } catch (error: any) {
+      setErrorMsg(error.message || 'Terjadi kesalahan saat pendaftaran.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -52,6 +140,12 @@ function RegisterWarung() {
             </p>
           </div>
 
+          {errorMsg && (
+            <div className="rounded-wk-md bg-red-50 p-wk-md text-[14px] text-red-600 border border-red-200">
+              {errorMsg}
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-wk-md">
             {/* Nama Lengkap Pemilik */}
@@ -66,10 +160,11 @@ function RegisterWarung() {
                 id="register-nama-lengkap"
                 type="text"
                 required
+                disabled={isLoading}
                 placeholder="Budi Santoso"
                 value={namaLengkap}
                 onChange={(e) => setNamaLengkap(e.target.value)}
-                className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none"
+                className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none disabled:opacity-50"
               />
             </div>
 
@@ -85,10 +180,11 @@ function RegisterWarung() {
                 id="register-nama-warung"
                 type="text"
                 required
+                disabled={isLoading}
                 placeholder="Warung Berkah Jaya"
                 value={namaWarung}
                 onChange={(e) => setNamaWarung(e.target.value)}
-                className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none"
+                className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none disabled:opacity-50"
               />
             </div>
 
@@ -105,10 +201,11 @@ function RegisterWarung() {
                   id="register-whatsapp"
                   type="text"
                   required
+                  disabled={isLoading}
                   placeholder="+62 812-3456-7890"
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
-                  className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none"
+                  className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none disabled:opacity-50"
                 />
               </div>
               <div className="space-y-wk-xxs">
@@ -122,10 +219,11 @@ function RegisterWarung() {
                   id="register-email"
                   type="email"
                   required
+                  disabled={isLoading}
                   placeholder="budi.santoso@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none"
+                  className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none disabled:opacity-50"
                 />
               </div>
             </div>
@@ -144,15 +242,17 @@ function RegisterWarung() {
                     id="register-password"
                     type={showPassword ? 'text' : 'password'}
                     required
+                    disabled={isLoading}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm pr-10 text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none"
+                    className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm pr-10 text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none disabled:opacity-50"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-wk-on-surface-variant hover:text-wk-on-surface"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-wk-on-surface-variant hover:text-wk-on-surface disabled:opacity-50"
+                    disabled={isLoading}
                     aria-label={
                       showPassword ? 'Sembunyikan sandi' : 'Tampilkan sandi'
                     }
@@ -177,15 +277,17 @@ function RegisterWarung() {
                     id="register-confirm-password"
                     type={showConfirmPassword ? 'text' : 'password'}
                     required
+                    disabled={isLoading}
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm pr-10 text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none"
+                    className="w-full rounded-wk-lg bg-wk-surface-container-low px-wk-md py-wk-sm pr-10 text-wk-on-surface transition-all placeholder:text-wk-outline focus:ring-2 focus:ring-wk-primary focus:outline-none disabled:opacity-50"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-wk-on-surface-variant hover:text-wk-on-surface"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-wk-on-surface-variant hover:text-wk-on-surface disabled:opacity-50"
+                    disabled={isLoading}
                     aria-label={
                       showConfirmPassword
                         ? 'Sembunyikan sandi'
@@ -205,10 +307,15 @@ function RegisterWarung() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="mt-wk-lg flex w-full items-center justify-center gap-wk-xs rounded-wk-lg bg-wk-primary px-wk-md py-wk-md text-[14px] leading-[20px] font-medium text-wk-on-primary shadow-sm transition-all hover:bg-wk-primary-container"
+              disabled={isLoading}
+              className="mt-wk-lg flex w-full items-center justify-center gap-wk-xs rounded-wk-lg bg-wk-primary px-wk-md py-wk-md text-[14px] leading-[20px] font-medium text-wk-on-primary shadow-sm transition-all hover:bg-wk-primary-container disabled:opacity-70"
             >
-              <UserPlus className="size-[18px]" />
-              Daftar & Buat Warung
+              {isLoading ? (
+                <Loader2 className="size-[18px] animate-spin" />
+              ) : (
+                <UserPlus className="size-[18px]" />
+              )}
+              {isLoading ? 'Mendaftarkan...' : 'Daftar & Buat Warung'}
             </button>
           </form>
 

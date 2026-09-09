@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: warungku-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: warungku
+      POSTGRES_USER: warungku
+      POSTGRES_PASSWORD: warungku_dev
+    ports:
+      - '5432:5432'
+    volumes:
+      - warungku_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  warungku_postgres_data:
