@@ -140,7 +140,7 @@ function LoginPemilik() {
           <div className="text-center text-[12px] leading-[16px] text-wk-on-surface-variant">
             Belum punya akun warung?{' '}
             <Link
-              to="/"
+              to="/register"
               className="font-medium text-wk-primary hover:underline"
             >
               Daftar sekarang
