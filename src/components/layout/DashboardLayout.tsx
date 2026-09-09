@@ -106,13 +106,14 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
             <Warehouse size={20} className="mr-wk-sm" />
             Stok
           </Link>
-          <a
-            href="#"
-            className="flex items-center px-wk-md py-wk-sm rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container-high hover:text-wk-on-surface transition-all"
+          <Link
+            to="/transactions"
+            className="flex items-center px-wk-md py-wk-sm rounded-xl transition-all hover:bg-wk-surface-container-high hover:text-wk-on-surface text-wk-on-surface-variant [&.active]:bg-wk-primary-container [&.active]:text-wk-on-primary-container [&.active]:font-medium"
+            onClick={() => setIsSidebarOpen(false)}
           >
             <Receipt size={20} className="mr-wk-sm" />
             Transaksi
-          </a>
+          </Link>
           <a
             href="#"
             className="flex items-center px-wk-md py-wk-sm rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container-high hover:text-wk-on-surface transition-all"

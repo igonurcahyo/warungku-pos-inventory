@@ -29,6 +29,13 @@
       "when": 1788972321720,
       "tag": "0003_amusing_enchantress",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788974648406,
+      "tag": "0004_fat_power_man",
+      "breakpoints": true
     }
   ]
 }

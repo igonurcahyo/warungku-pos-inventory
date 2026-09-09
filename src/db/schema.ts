@@ -5,6 +5,7 @@ import {
   varchar,
   timestamp,
   uniqueIndex,
+  index,
   text,
 } from 'drizzle-orm/pg-core'
 
@@ -102,43 +103,58 @@ export const stockMovements = pgTable('stock_movements', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
-export const transactions = pgTable('transactions', {
-  id: serial('id').primaryKey(),
+export const transactions = pgTable(
+  'transactions',
+  {
+    id: serial('id').primaryKey(),
 
-  storeId: integer('store_id')
-    .notNull()
-    .references(() => stores.id, { onDelete: 'cascade' }),
+    storeId: integer('store_id')
+      .notNull()
+      .references(() => stores.id, { onDelete: 'cascade' }),
 
-  total: integer('total').notNull(),
+    total: integer('total').notNull(),
 
-  paidAmount: integer('paid_amount').notNull(),
+    paidAmount: integer('paid_amount').notNull(),
 
-  changeAmount: integer('change_amount').notNull(),
+    changeAmount: integer('change_amount').notNull(),
 
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    storeIdIdx: index('transactions_store_id_idx').on(table.storeId),
+    createdAtIdx: index('transactions_created_at_idx').on(table.createdAt),
+  }),
+)
 
-export const transactionItems = pgTable('transaction_items', {
-  id: serial('id').primaryKey(),
+export const transactionItems = pgTable(
+  'transaction_items',
+  {
+    id: serial('id').primaryKey(),
 
-  transactionId: integer('transaction_id')
-    .notNull()
-    .references(() => transactions.id, { onDelete: 'cascade' }),
+    transactionId: integer('transaction_id')
+      .notNull()
+      .references(() => transactions.id, { onDelete: 'cascade' }),
 
-  productId: integer('product_id')
-    .notNull()
-    .references(() => products.id, { onDelete: 'cascade' }),
+    productId: integer('product_id')
+      .notNull()
+      .references(() => products.id, { onDelete: 'cascade' }),
 
-  productName: varchar('product_name', { length: 255 }).notNull(),
+    productName: varchar('product_name', { length: 255 }).notNull(),
 
-  price: integer('price').notNull(),
+    price: integer('price').notNull(),
 
-  quantity: integer('quantity').notNull(),
+    quantity: integer('quantity').notNull(),
 
-  subtotal: integer('subtotal').notNull(),
+    subtotal: integer('subtotal').notNull(),
 
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    transactionIdIdx: index('transaction_items_transaction_id_idx').on(
+      table.transactionId,
+    ),
+  }),
+)
 
 export type Category = typeof categories.$inferSelect
 export type NewCategory = typeof categories.$inferInsert
