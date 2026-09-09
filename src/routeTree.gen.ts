@@ -14,6 +14,7 @@ import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LaporanRouteImport } from './routes/laporan'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PengaturanRouteImport } from './routes/pengaturan'
 import { Route as PosRouteImport } from './routes/pos'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -43,6 +44,11 @@ const LaporanRoute = LaporanRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PengaturanRoute = PengaturanRouteImport.update({
+  id: '/pengaturan',
+  path: '/pengaturan',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PosRoute = PosRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/laporan': typeof LaporanRoute
   '/login': typeof LoginRoute
+  '/pengaturan': typeof PengaturanRoute
   '/pos': typeof PosRoute
   '/products': typeof ProductsRoute
   '/register': typeof RegisterRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/laporan': typeof LaporanRoute
   '/login': typeof LoginRoute
+  '/pengaturan': typeof PengaturanRoute
   '/pos': typeof PosRoute
   '/products': typeof ProductsRoute
   '/register': typeof RegisterRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/laporan': typeof LaporanRoute
   '/login': typeof LoginRoute
+  '/pengaturan': typeof PengaturanRoute
   '/pos': typeof PosRoute
   '/products': typeof ProductsRoute
   '/register': typeof RegisterRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/laporan'
     | '/login'
+    | '/pengaturan'
     | '/pos'
     | '/products'
     | '/register'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/laporan'
     | '/login'
+    | '/pengaturan'
     | '/pos'
     | '/products'
     | '/register'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/laporan'
     | '/login'
+    | '/pengaturan'
     | '/pos'
     | '/products'
     | '/register'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LaporanRoute: typeof LaporanRoute
   LoginRoute: typeof LoginRoute
+  PengaturanRoute: typeof PengaturanRoute
   PosRoute: typeof PosRoute
   ProductsRoute: typeof ProductsRoute
   RegisterRoute: typeof RegisterRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pengaturan': {
+      id: '/pengaturan'
+      path: '/pengaturan'
+      fullPath: '/pengaturan'
+      preLoaderRoute: typeof PengaturanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pos': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   LaporanRoute: LaporanRoute,
   LoginRoute: LoginRoute,
+  PengaturanRoute: PengaturanRoute,
   PosRoute: PosRoute,
   ProductsRoute: ProductsRoute,
   RegisterRoute: RegisterRoute,

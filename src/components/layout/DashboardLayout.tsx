@@ -16,8 +16,10 @@ import {
   Menu,
   X,
   LogOut,
+  Loader2,
 } from 'lucide-react'
 import { logoutFn } from '@/lib/auth'
+import { WarungkuLogo } from '@/components/warungku-logo'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -26,11 +28,19 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, user }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
   const router = useRouter()
 
   async function handleLogout() {
-    await logoutFn()
-    router.navigate({ to: '/login' })
+    try {
+      setIsLoggingOut(true)
+      await logoutFn()
+      router.navigate({ to: '/login' })
+    } catch (error) {
+      console.error('Logout error:', error)
+      setIsLoggingOut(false)
+    }
   }
 
   return (
@@ -49,11 +59,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
       >
         <div className="px-wk-lg mb-wk-xl flex items-center justify-between gap-wk-sm">
           <div className="flex items-center gap-wk-sm">
-            <img
-              alt="Warung Logo"
-              className="h-8 w-auto object-contain"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2wf_FLuqsVUU6fM4TgJQVfhlrASiXj1F8eIJiiJjwBQgU36Nj3BH-uA_t5d0KstB08LHbedBTsHB4Ba1WkUwNXlPt-IoSfLGDtJVaFzAQzjx3Knh2bDsLg7sYnu83VE3PfYA7O3jExLzdkcOPqwhuKhmAmtii5jELZwEbrRvbeaFIEQaDI7CSJZaugdP_vJUFE7kMlpudVN7vhp2l19XrsymNmBqPSUOlmNMhtUM0M998EPlkZ9o"
-            />
+            <WarungkuLogo className="h-8 w-auto object-contain rounded-md" />
             <span className="font-wk-heading font-semibold text-wk-primary tracking-tight truncate">
               {user?.store?.name || 'Warung Anda'}
             </span>
@@ -123,14 +129,30 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
             <ChartNoAxesCombined size={20} className="mr-wk-sm" />
             Laporan
           </Link>
-          <a
-            href="#"
-            className="flex items-center px-wk-md py-wk-sm rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container-high hover:text-wk-on-surface transition-all"
+          <Link
+            to="/pengaturan"
+            className="flex items-center px-wk-md py-wk-sm rounded-xl transition-all hover:bg-wk-surface-container-high hover:text-wk-on-surface text-wk-on-surface-variant [&.active]:bg-wk-primary-container [&.active]:text-wk-on-primary-container [&.active]:font-medium"
+            onClick={() => setIsSidebarOpen(false)}
           >
             <Settings size={20} className="mr-wk-sm" />
             Pengaturan
-          </a>
+          </Link>
         </nav>
+
+        {/* Sidebar Logout Button */}
+        <div className="px-wk-md pt-wk-sm mt-auto border-t border-wk-surface-container">
+          <button
+            type="button"
+            onClick={() => {
+              setIsSidebarOpen(false)
+              setShowLogoutConfirm(true)
+            }}
+            className="w-full flex items-center px-wk-md py-wk-sm rounded-xl transition-all hover:bg-wk-error-container/30 text-wk-error font-medium cursor-pointer"
+          >
+            <LogOut size={20} className="mr-wk-sm" />
+            Keluar Akun
+          </button>
+        </div>
       </aside>
 
       {/* Main Content Wrapper */}
@@ -171,9 +193,10 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
               </div>
             </div>
             <button
-              onClick={handleLogout}
+              type="button"
+              onClick={() => setShowLogoutConfirm(true)}
               className="relative p-wk-xs text-wk-error hover:bg-wk-error-container/50 rounded-full transition-colors cursor-pointer ml-wk-sm flex items-center justify-center"
-              title="Keluar"
+              title="Keluar Akun"
             >
               <LogOut size={20} />
             </button>
@@ -187,6 +210,48 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
           </div>
         </main>
       </div>
+
+      {/* Modal Konfirmasi Logout */}
+      {showLogoutConfirm && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-wk-md animate-in fade-in duration-200"
+          onClick={() => !isLoggingOut && setShowLogoutConfirm(false)}
+        >
+          <div
+            className="bg-wk-surface-container-lowest rounded-2xl max-w-md w-full p-wk-xl shadow-2xl border border-wk-surface-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-full bg-wk-error-container text-wk-error flex items-center justify-center mb-wk-md mx-auto">
+              <LogOut size={24} />
+            </div>
+            <h3 className="font-wk-heading text-lg font-bold text-wk-on-surface text-center mb-1">
+              Konfirmasi Keluar
+            </h3>
+            <p className="text-sm text-wk-on-surface-variant text-center mb-wk-lg">
+              Apakah Anda yakin ingin keluar dari sistem WarungKu? Anda harus masuk kembali untuk mengakses data toko.
+            </p>
+            <div className="flex items-center justify-center gap-wk-sm">
+              <button
+                type="button"
+                onClick={() => setShowLogoutConfirm(false)}
+                disabled={isLoggingOut}
+                className="px-wk-lg py-2.5 rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container text-sm font-medium transition-colors cursor-pointer flex-1 disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="px-wk-lg py-2.5 rounded-xl bg-wk-error text-white text-sm font-medium hover:bg-red-700 transition-colors shadow-sm cursor-pointer flex-1 flex items-center justify-center gap-1.5 disabled:opacity-50"
+              >
+                {isLoggingOut && <Loader2 size={16} className="animate-spin" />}
+                <span>Ya, Keluar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

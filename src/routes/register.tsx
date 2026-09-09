@@ -147,7 +147,7 @@ function RegisterWarung() {
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-wk-md">
+          <form onSubmit={handleSubmit} className="space-y-wk-md" autoComplete="off">
             {/* Nama Lengkap Pemilik */}
             <div className="space-y-wk-xxs">
               <label
@@ -158,8 +158,10 @@ function RegisterWarung() {
               </label>
               <input
                 id="register-nama-lengkap"
+                name="namaLengkap"
                 type="text"
                 required
+                autoComplete="off"
                 disabled={isLoading}
                 placeholder="Budi Santoso"
                 value={namaLengkap}
@@ -178,8 +180,10 @@ function RegisterWarung() {
               </label>
               <input
                 id="register-nama-warung"
+                name="namaWarung"
                 type="text"
                 required
+                autoComplete="off"
                 disabled={isLoading}
                 placeholder="Warung Berkah Jaya"
                 value={namaWarung}
@@ -199,8 +203,10 @@ function RegisterWarung() {
                 </label>
                 <input
                   id="register-whatsapp"
+                  name="whatsapp"
                   type="text"
                   required
+                  autoComplete="off"
                   disabled={isLoading}
                   placeholder="+62 812-3456-7890"
                   value={whatsapp}
@@ -217,8 +223,10 @@ function RegisterWarung() {
                 </label>
                 <input
                   id="register-email"
+                  name="email"
                   type="email"
                   required
+                  autoComplete="off"
                   disabled={isLoading}
                   placeholder="budi.santoso@example.com"
                   value={email}
@@ -240,8 +248,10 @@ function RegisterWarung() {
                 <div className="relative">
                   <input
                     id="register-password"
+                    name="password"
                     type={showPassword ? 'text' : 'password'}
                     required
+                    autoComplete="new-password"
                     disabled={isLoading}
                     placeholder="••••••••"
                     value={password}
@@ -275,8 +285,10 @@ function RegisterWarung() {
                 <div className="relative">
                   <input
                     id="register-confirm-password"
+                    name="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     required
+                    autoComplete="new-password"
                     disabled={isLoading}
                     placeholder="••••••••"
                     value={confirmPassword}

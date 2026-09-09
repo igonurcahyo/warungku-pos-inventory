@@ -25,6 +25,7 @@ export const getCurrentUserFn = createServerFn({ method: 'GET' }).handler(
           id: users.id,
           name: users.name,
           email: users.email,
+          whatsapp: users.whatsapp,
         })
         .from(users)
         .where(eq(users.id, session.userId))
