@@ -27,75 +27,7 @@ async function getRequiredStoreSession() {
   return { session, store }
 }
 
-export const getCategoriesFn = createServerFn({ method: 'GET' }).handler(
-  async () => {
-    const { store } = await getRequiredStoreSession()
-
-    let catList = await db
-      .select({
-        id: categories.id,
-        storeId: categories.storeId,
-        name: categories.name,
-        createdAt: categories.createdAt,
-        updatedAt: categories.updatedAt,
-      })
-      .from(categories)
-      .where(eq(categories.storeId, store.id))
-      .orderBy(categories.name)
-
-    // Auto-seed initial default categories if warung doesn't have any yet
-    if (catList.length === 0) {
-      const defaultCategories = [
-        'Makanan & Instan',
-        'Minuman',
-        'Sembako',
-        'Rokok & Tembakau',
-        'Kebutuhan Rumah',
-      ]
-
-      await db.insert(categories).values(
-        defaultCategories.map((name) => ({
-          storeId: store.id,
-          name,
-        })),
-      )
-
-      catList = await db
-        .select({
-          id: categories.id,
-          storeId: categories.storeId,
-          name: categories.name,
-          createdAt: categories.createdAt,
-          updatedAt: categories.updatedAt,
-        })
-        .from(categories)
-        .where(eq(categories.storeId, store.id))
-        .orderBy(categories.name)
-    }
-
-    return catList
-  },
-)
-
-export const createCategoryFn = createServerFn({ method: 'POST' })
-  .validator((data: { name: string }) => data)
-  .handler(async ({ data }) => {
-    const { store } = await getRequiredStoreSession()
-    const trimmedName = data.name.trim()
-    if (!trimmedName) {
-      throw new Error('Nama kategori tidak boleh kosong.')
-    }
-
-    const inserted = await db
-      .insert(categories)
-      .values({
-        storeId: store.id,
-        name: trimmedName,
-      })
-      .returning()
-
-    return inserted[0]
-  })
+export { getCategoriesFn, createCategoryFn } from './categories'
 
 export const getProductsFn = createServerFn({ method: 'GET' })
   .validator(

@@ -91,13 +91,14 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
             <Package size={20} className="mr-wk-sm" />
             Produk
           </Link>
-          <a
-            href="#"
-            className="flex items-center px-wk-md py-wk-sm rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container-high hover:text-wk-on-surface transition-all"
+          <Link
+            to="/categories"
+            className="flex items-center px-wk-md py-wk-sm rounded-xl transition-all hover:bg-wk-surface-container-high hover:text-wk-on-surface text-wk-on-surface-variant [&.active]:bg-wk-primary-container [&.active]:text-wk-on-primary-container [&.active]:font-medium"
+            onClick={() => setIsSidebarOpen(false)}
           >
             <Tags size={20} className="mr-wk-sm" />
             Kategori
-          </a>
+          </Link>
           <Link
             to="/stock"
             className="flex items-center px-wk-md py-wk-sm rounded-xl transition-all hover:bg-wk-surface-container-high hover:text-wk-on-surface text-wk-on-surface-variant [&.active]:bg-wk-primary-container [&.active]:text-wk-on-primary-container [&.active]:font-medium"
@@ -114,13 +115,14 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
             <Receipt size={20} className="mr-wk-sm" />
             Transaksi
           </Link>
-          <a
-            href="#"
-            className="flex items-center px-wk-md py-wk-sm rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container-high hover:text-wk-on-surface transition-all"
+          <Link
+            to="/laporan"
+            className="flex items-center px-wk-md py-wk-sm rounded-xl transition-all hover:bg-wk-surface-container-high hover:text-wk-on-surface text-wk-on-surface-variant [&.active]:bg-wk-primary-container [&.active]:text-wk-on-primary-container [&.active]:font-medium"
+            onClick={() => setIsSidebarOpen(false)}
           >
             <ChartNoAxesCombined size={20} className="mr-wk-sm" />
             Laporan
-          </a>
+          </Link>
           <a
             href="#"
             className="flex items-center px-wk-md py-wk-sm rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container-high hover:text-wk-on-surface transition-all"

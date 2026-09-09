@@ -45,19 +45,28 @@ export const stores = pgTable('stores', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const categories = pgTable('categories', {
-  id: serial('id').primaryKey(),
+export const categories = pgTable(
+  'categories',
+  {
+    id: serial('id').primaryKey(),
 
-  storeId: integer('store_id')
-    .notNull()
-    .references(() => stores.id, { onDelete: 'cascade' }),
+    storeId: integer('store_id')
+      .notNull()
+      .references(() => stores.id, { onDelete: 'cascade' }),
 
-  name: varchar('name', { length: 100 }).notNull(),
+    name: varchar('name', { length: 100 }).notNull(),
 
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
 
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-})
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    storeIdNameUnique: uniqueIndex('categories_store_id_name_unique').on(
+      table.storeId,
+      table.name,
+    ),
+  }),
+)
 
 export const products = pgTable('products', {
   id: serial('id').primaryKey(),

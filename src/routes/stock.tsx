@@ -17,7 +17,6 @@ import {
   X,
   Loader2,
   Calendar,
-  Layers,
 } from 'lucide-react'
 import { getSessionFn, getCurrentUserFn } from '@/lib/auth'
 import { getCategoriesFn } from '@/server/products'
@@ -45,7 +44,7 @@ export const Route = createFileRoute('/stock')({
     const [productsList, categoriesList, historyList] = await Promise.all([
       getStockProductsFn(),
       getCategoriesFn(),
-      getStockHistoryFn({ limit: 20 }),
+      getStockHistoryFn({ data: { limit: 20 } }),
     ])
     return {
       user,

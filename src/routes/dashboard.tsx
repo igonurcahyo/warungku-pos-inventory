@@ -2,8 +2,7 @@ import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { DashboardLayout } from '../components/layout/DashboardLayout'
 import { 
   Calendar, Download, ShoppingCart, CreditCard, TrendingUp, WalletCards, 
-  Package, Warehouse, TriangleAlert, CalendarRange, ArrowRight, Receipt, 
-  QrCode, XCircle 
+  Package, Warehouse, TriangleAlert, CalendarRange, ArrowRight, Receipt 
 } from 'lucide-react'
 import { getSessionFn, getCurrentUserFn } from '@/lib/auth'
 import { getDashboardStatsFn } from '@/server/dashboard'

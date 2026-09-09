@@ -36,6 +36,13 @@
       "when": 1788974648406,
       "tag": "0004_fat_power_man",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788981901389,
+      "tag": "0005_mute_bucky",
+      "breakpoints": true
     }
   ]
 }
