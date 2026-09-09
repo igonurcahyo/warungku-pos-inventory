@@ -3,6 +3,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -23,6 +24,45 @@ body {
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Geist Variable', sans-serif;
+  --font-wk-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-wk-body: 'Inter', sans-serif;
+
+  /* WarungKu Design System Colors */
+  --color-wk-primary: #004532;
+  --color-wk-primary-container: #065f46;
+  --color-wk-on-primary: #ffffff;
+  --color-wk-on-primary-container: #8bd6b7;
+  --color-wk-secondary: #904d00;
+  --color-wk-secondary-container: #fe932c;
+  --color-wk-on-secondary: #ffffff;
+  --color-wk-surface: #f7faf6;
+  --color-wk-surface-container-lowest: #ffffff;
+  --color-wk-surface-container-low: #f1f4f0;
+  --color-wk-surface-container: #ecefeb;
+  --color-wk-surface-container-high: #e6e9e5;
+  --color-wk-on-surface: #181c1a;
+  --color-wk-on-surface-variant: #3f4944;
+  --color-wk-outline: #6f7973;
+  --color-wk-outline-variant: #bec9c2;
+  --color-wk-error: #ba1a1a;
+  --color-wk-error-container: #ffdad6;
+
+  /* WarungKu Spacing */
+  --spacing-wk-xxs: 0.25rem;
+  --spacing-wk-xs: 0.5rem;
+  --spacing-wk-sm: 0.75rem;
+  --spacing-wk-md: 1rem;
+  --spacing-wk-lg: 1.5rem;
+  --spacing-wk-xl: 2rem;
+  --spacing-wk-xxl: 3rem;
+
+  /* WarungKu Border Radius */
+  --radius-wk-sm: 0.125rem;
+  --radius-wk-default: 0.25rem;
+  --radius-wk-md: 0.375rem;
+  --radius-wk-lg: 0.5rem;
+  --radius-wk-xl: 0.75rem;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
