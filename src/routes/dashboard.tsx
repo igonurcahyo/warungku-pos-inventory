@@ -52,15 +52,46 @@ function DashboardPage() {
         return
       }
 
-      const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8;' })
+      const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8' })
       const url = URL.createObjectURL(blob)
+      const filename = result.filename || 'laporan-penjualan.csv'
+
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', result.filename || 'laporan-penjualan.csv')
+      link.setAttribute('download', filename)
+      link.setAttribute('target', '_blank')
+      link.setAttribute('rel', 'noopener noreferrer')
+      link.style.position = 'fixed'
+      link.style.top = '-9999px'
+      link.style.left = '-9999px'
+      link.style.opacity = '0'
+      link.setAttribute('aria-hidden', 'true')
+
       document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
+
+      if (typeof link.click === 'function') {
+        link.click()
+      } else {
+        const event = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+        })
+        link.dispatchEvent(event)
+      }
+
+      // Cleanup dilakukan setelah jeda agar browser mobile (Android DownloadManager / iOS WebKit)
+      // memiliki waktu untuk membaca stream object URL sebelum URL di-revoke.
+      setTimeout(() => {
+        try {
+          if (link.parentNode) {
+            document.body.removeChild(link)
+          }
+          URL.revokeObjectURL(url)
+        } catch {
+          // Abaikan error cleanup jika ada
+        }
+      }, 5000)
 
       setFeedbackMsg({
         type: 'success',
@@ -99,12 +130,12 @@ function DashboardPage() {
             Dashboard {user.store ? user.store.name : 'Warung Anda'}
           </h1>
         </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-wk-sm w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-wk-sm w-full sm:w-auto relative z-10">
           <button
             type="button"
             onClick={handleDownloadReport}
             disabled={isDownloading}
-            className="flex items-center justify-center gap-wk-xs bg-wk-surface-container-high hover:bg-wk-surface-container-highest text-wk-on-surface px-wk-md py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm cursor-pointer w-full sm:w-auto disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-wk-xs bg-wk-surface-container-high hover:bg-wk-surface-container-highest active:bg-wk-surface-container-highest text-wk-on-surface px-wk-md py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm cursor-pointer w-full sm:w-auto disabled:opacity-60 disabled:cursor-not-allowed touch-manipulation min-h-[44px]"
           >
             {isDownloading ? (
               <>
@@ -119,7 +150,7 @@ function DashboardPage() {
             )}
           </button>
           <Link
-            className="flex items-center justify-center gap-wk-xs bg-wk-primary text-wk-on-primary px-wk-md py-2.5 rounded-xl text-sm font-medium hover:bg-wk-primary-container transition-all shadow-sm w-full sm:w-auto"
+            className="flex items-center justify-center gap-wk-xs bg-wk-primary text-wk-on-primary px-wk-md py-2.5 rounded-xl text-sm font-medium hover:bg-wk-primary-container transition-all shadow-sm w-full sm:w-auto touch-manipulation min-h-[44px]"
             to="/pos"
           >
             <ShoppingCart size={18} />
