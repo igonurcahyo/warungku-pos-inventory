@@ -11,7 +11,6 @@ import {
   ChartNoAxesCombined,
   Settings,
   CreditCard,
-  Bell,
   User,
   Menu,
   X,
@@ -20,6 +19,7 @@ import {
 } from 'lucide-react'
 import { logoutFn } from '@/lib/auth'
 import { WarungkuLogo } from '@/components/warungku-logo'
+import { NotificationDropdown } from './NotificationDropdown'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -178,13 +178,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-wk-lg">
-            <button
-              className="relative p-1.5 sm:p-wk-xs text-wk-on-surface-variant hover:text-wk-on-surface hover:bg-wk-surface-container-high rounded-full transition-colors cursor-pointer"
-              title="Notifikasi"
-            >
-              <Bell size={18} className="sm:w-5 sm:h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-wk-error rounded-full ring-2 ring-wk-surface"></span>
-            </button>
+            <NotificationDropdown />
             <div className="flex items-center gap-1.5 sm:gap-wk-sm hover:opacity-80 transition-opacity">
               <div className="text-right hidden sm:block">
                 <div className="text-sm font-medium text-wk-on-surface">

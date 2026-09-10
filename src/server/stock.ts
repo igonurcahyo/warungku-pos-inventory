@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { db } from '@/db'
 import { products, categories, stores, stockMovements } from '@/db/schema'
-import { eq, and, desc, sql, gte } from 'drizzle-orm'
+import { eq, and, desc, sql, gte, lte, asc } from 'drizzle-orm'
 import { STOCK_THRESHOLDS } from '@/lib/stock-config'
 
 async function getRequiredStoreSession() {
@@ -273,3 +273,40 @@ export const getStockHistoryFn = createServerFn({ method: 'GET' })
   })
 
 export const getStockHistory = getStockHistoryFn
+
+export interface StockNotificationItem {
+  id: number
+  name: string
+  stock: number
+  unit: string
+  status: 'Stok habis' | 'Stok menipis'
+}
+
+export const getStockNotificationsFn = createServerFn({ method: 'GET' })
+  .handler(async (): Promise<StockNotificationItem[]> => {
+    const { store } = await getRequiredStoreSession()
+
+    const rows = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        stock: products.stock,
+        unit: products.unit,
+      })
+      .from(products)
+      .where(
+        and(
+          eq(products.storeId, store.id),
+          lte(products.stock, STOCK_THRESHOLDS.LOW_STOCK),
+        ),
+      )
+      .orderBy(asc(products.stock), asc(products.name))
+
+    return rows.map((product) => ({
+      id: product.id,
+      name: product.name,
+      stock: product.stock,
+      unit: product.unit,
+      status: product.stock <= 0 ? 'Stok habis' : 'Stok menipis',
+    }))
+  })
