@@ -1,11 +1,13 @@
+import { useState } from 'react'
 import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { DashboardLayout } from '../components/layout/DashboardLayout'
 import { 
   Calendar, Download, ShoppingCart, CreditCard, TrendingUp, WalletCards, 
-  Package, Warehouse, TriangleAlert, CalendarRange, ArrowRight, Receipt 
+  Package, Warehouse, TriangleAlert, CalendarRange, ArrowRight, Receipt,
+  Loader2, CheckCircle2, AlertCircle, Info, X
 } from 'lucide-react'
 import { getSessionFn, getCurrentUserFn } from '@/lib/auth'
-import { getDashboardStatsFn } from '@/server/dashboard'
+import { getDashboardStatsFn, getSalesReportCsvFn } from '@/server/dashboard'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: async () => {
@@ -29,6 +31,51 @@ export const Route = createFileRoute('/dashboard')({
 
 function DashboardPage() {
   const { user, stats } = Route.useLoaderData()
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [feedbackMsg, setFeedbackMsg] = useState<{
+    type: 'info' | 'error' | 'success'
+    text: string
+  } | null>(null)
+
+  async function handleDownloadReport() {
+    if (isDownloading) return
+    setIsDownloading(true)
+    setFeedbackMsg(null)
+
+    try {
+      const result = await getSalesReportCsvFn()
+      if (!result.csv) {
+        setFeedbackMsg({
+          type: 'info',
+          text: 'Tidak ada data penjualan untuk diunduh.',
+        })
+        return
+      }
+
+      const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', result.filename || 'laporan-penjualan.csv')
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+
+      setFeedbackMsg({
+        type: 'success',
+        text: `Laporan berhasil diunduh (${result.count} transaksi).`,
+      })
+    } catch (error) {
+      console.error('Download report error:', error)
+      setFeedbackMsg({
+        type: 'error',
+        text: 'Gagal mengunduh laporan. Silakan coba lagi.',
+      })
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   return (
     <DashboardLayout user={user}>
@@ -53,9 +100,23 @@ function DashboardPage() {
           </h1>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-wk-sm w-full sm:w-auto">
-          <button className="flex items-center justify-center gap-wk-xs bg-wk-surface-container-high hover:bg-wk-surface-container-highest text-wk-on-surface px-wk-md py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm cursor-pointer w-full sm:w-auto">
-            <Download size={18} />
-            <span>Unduh Laporan</span>
+          <button
+            type="button"
+            onClick={handleDownloadReport}
+            disabled={isDownloading}
+            className="flex items-center justify-center gap-wk-xs bg-wk-surface-container-high hover:bg-wk-surface-container-highest text-wk-on-surface px-wk-md py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm cursor-pointer w-full sm:w-auto disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {isDownloading ? (
+              <>
+                <Loader2 size={18} className="animate-spin text-wk-primary" />
+                <span>Menyiapkan laporan...</span>
+              </>
+            ) : (
+              <>
+                <Download size={18} />
+                <span>Unduh Laporan</span>
+              </>
+            )}
           </button>
           <Link
             className="flex items-center justify-center gap-wk-xs bg-wk-primary text-wk-on-primary px-wk-md py-2.5 rounded-xl text-sm font-medium hover:bg-wk-primary-container transition-all shadow-sm w-full sm:w-auto"
@@ -66,6 +127,38 @@ function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* Feedback Notification Banner */}
+      {feedbackMsg && (
+        <div
+          className={`mb-6 p-3 sm:p-wk-md rounded-xl flex items-center justify-between gap-2 text-xs sm:text-sm animate-in fade-in duration-150 ${
+            feedbackMsg.type === 'error'
+              ? 'bg-wk-error-container text-wk-error border border-wk-error/20'
+              : feedbackMsg.type === 'success'
+                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                : 'bg-wk-surface-container-high text-wk-on-surface border border-wk-outline-variant/40'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            {feedbackMsg.type === 'error' ? (
+              <AlertCircle size={16} className="shrink-0" />
+            ) : feedbackMsg.type === 'success' ? (
+              <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
+            ) : (
+              <Info size={16} className="shrink-0 text-wk-primary" />
+            )}
+            <span>{feedbackMsg.text}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFeedbackMsg(null)}
+            className="p-1 hover:opacity-70 cursor-pointer"
+            aria-label="Tutup pesan"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
 
       {/* Metric Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-wk-md mb-6 sm:mb-wk-xl">
