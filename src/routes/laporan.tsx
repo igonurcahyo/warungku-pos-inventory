@@ -268,6 +268,9 @@ function LaporanPage() {
               <div className="text-[11px] sm:text-xs text-wk-on-surface-variant">
                 Total omzet pada periode ini
               </div>
+              <div className="text-[11px] text-wk-on-surface-variant mt-1 truncate">
+                Cash: <span className="font-semibold text-wk-on-surface">{formatRupiah(summary.cashRevenue || 0)}</span> • QRIS: <span className="font-semibold text-wk-on-surface">{formatRupiah(summary.qrisRevenue || 0)}</span>
+              </div>
             </div>
           </div>
 
@@ -604,8 +607,14 @@ function LaporanPage() {
                         <div className="font-bold text-xs sm:text-sm text-wk-primary">
                           {formatRupiah(tx.total)}
                         </div>
-                        <span className="inline-block text-[9px] sm:text-[10px] font-medium px-1.5 py-0.2 rounded-full bg-wk-primary-fixed/30 text-wk-primary mt-0.5">
-                          Selesai
+                        <span
+                          className={`inline-block text-[9px] sm:text-[10px] font-semibold px-1.5 py-0.2 rounded-full mt-0.5 ${
+                            tx.paymentMethod === 'qris'
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-blue-100 text-blue-800'
+                          }`}
+                        >
+                          {tx.paymentMethod === 'qris' ? 'QRIS' : 'Cash'}
                         </span>
                       </div>
                     </div>

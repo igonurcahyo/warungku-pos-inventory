@@ -59,6 +59,8 @@ export interface TransactionListItem {
   id: number
   storeId: number
   transactionNumber: string
+  paymentMethod: 'cash' | 'qris'
+  paymentStatus: 'pending' | 'paid'
   total: number
   paidAmount: number
   changeAmount: number
@@ -72,6 +74,8 @@ export interface TransactionDetail {
   storeId: number
   storeName: string
   transactionNumber: string
+  paymentMethod: 'cash' | 'qris'
+  paymentStatus: 'pending' | 'paid'
   total: number
   paidAmount: number
   changeAmount: number
@@ -97,7 +101,7 @@ export const getTransactionsFn = createServerFn({ method: 'GET' })
     const period = filter.period || 'all'
     const search = filter.search ? filter.search.trim() : ''
 
-    // 1. Calculate overall store summary metrics
+    // 1. Calculate overall store summary metrics (only paid transactions)
     const now = new Date()
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999)
@@ -108,7 +112,12 @@ export const getTransactionsFn = createServerFn({ method: 'GET' })
         totalSum: sum(transactions.total),
       })
       .from(transactions)
-      .where(eq(transactions.storeId, store.id))
+      .where(
+        and(
+          eq(transactions.storeId, store.id),
+          eq(transactions.paymentStatus, 'paid'),
+        ),
+      )
 
     const [todayMetrics] = await db
       .select({
@@ -119,6 +128,7 @@ export const getTransactionsFn = createServerFn({ method: 'GET' })
       .where(
         and(
           eq(transactions.storeId, store.id),
+          eq(transactions.paymentStatus, 'paid'),
           gte(transactions.createdAt, startOfToday),
           lte(transactions.createdAt, endOfToday),
         ),
@@ -236,6 +246,8 @@ export const getTransactionsFn = createServerFn({ method: 'GET' })
       .select({
         id: transactions.id,
         storeId: transactions.storeId,
+        paymentMethod: transactions.paymentMethod,
+        paymentStatus: transactions.paymentStatus,
         total: transactions.total,
         paidAmount: transactions.paidAmount,
         changeAmount: transactions.changeAmount,
@@ -258,6 +270,8 @@ export const getTransactionsFn = createServerFn({ method: 'GET' })
       id: row.id,
       storeId: row.storeId,
       transactionNumber: formatTransactionNumber(row.id, row.createdAt),
+      paymentMethod: (row.paymentMethod as 'cash' | 'qris') || 'cash',
+      paymentStatus: (row.paymentStatus as 'pending' | 'paid') || 'paid',
       total: row.total,
       paidAmount: row.paidAmount,
       changeAmount: row.changeAmount,
@@ -320,6 +334,8 @@ export const getTransactionDetailFn = createServerFn({ method: 'GET' })
       storeId: txn.storeId,
       storeName: store.name,
       transactionNumber: formatTransactionNumber(txn.id, txn.createdAt),
+      paymentMethod: (txn.paymentMethod as 'cash' | 'qris') || 'cash',
+      paymentStatus: (txn.paymentStatus as 'pending' | 'paid') || 'paid',
       total: txn.total,
       paidAmount: txn.paidAmount,
       changeAmount: txn.changeAmount,

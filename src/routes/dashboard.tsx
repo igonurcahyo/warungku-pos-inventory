@@ -110,6 +110,9 @@ function DashboardPage() {
               <TrendingUp size={15} />
               <span>Total omzet hari ini</span>
             </div>
+            <div className="text-[11px] text-wk-on-surface-variant mt-1 truncate">
+              Cash: <span className="font-semibold text-wk-on-surface">Rp {(stats.cashSales || 0).toLocaleString('id-ID')}</span> • QRIS: <span className="font-semibold text-wk-on-surface">Rp {(stats.qrisSales || 0).toLocaleString('id-ID')}</span>
+            </div>
           </div>
         </div>
 
@@ -515,8 +518,14 @@ function DashboardPage() {
                         <span className="font-medium text-xs sm:text-sm text-wk-on-surface">
                           #TRX-{trx.id.toString().padStart(4, '0')}
                         </span>
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-wk-primary/10 text-wk-primary">
-                          Tunai
+                        <span
+                          className={`px-1.5 py-0.2 rounded text-[10px] font-semibold ${
+                            trx.paymentMethod === 'qris'
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-blue-100 text-blue-800'
+                          }`}
+                        >
+                          {trx.paymentMethod === 'qris' ? 'QRIS' : 'Cash'}
                         </span>
                       </div>
                       <div className="text-[11px] text-wk-on-surface-variant">

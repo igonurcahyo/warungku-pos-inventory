@@ -123,6 +123,14 @@ export const transactions = pgTable(
 
     total: integer('total').notNull(),
 
+    paymentMethod: varchar('payment_method', { length: 20 })
+      .notNull()
+      .default('cash'), // 'cash' | 'qris'
+
+    paymentStatus: varchar('payment_status', { length: 20 })
+      .notNull()
+      .default('paid'), // 'pending' | 'paid'
+
     paidAmount: integer('paid_amount').notNull(),
 
     changeAmount: integer('change_amount').notNull(),
@@ -132,6 +140,9 @@ export const transactions = pgTable(
   (table) => ({
     storeIdIdx: index('transactions_store_id_idx').on(table.storeId),
     createdAtIdx: index('transactions_created_at_idx').on(table.createdAt),
+    paymentStatusIdx: index('transactions_payment_status_idx').on(
+      table.paymentStatus,
+    ),
   }),
 )
 

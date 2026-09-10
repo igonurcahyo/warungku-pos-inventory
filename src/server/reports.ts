@@ -64,6 +64,8 @@ export interface SalesReportData {
   endDateStr: string
   summary: {
     totalRevenue: number
+    cashRevenue: number
+    qrisRevenue: number
     totalTransactions: number
     totalItemsSold: number
     averageTransaction: number
@@ -83,6 +85,7 @@ export interface SalesReportData {
   recentTransactions: Array<{
     id: number
     transactionNumber: string
+    paymentMethod: 'cash' | 'qris'
     total: number
     paidAmount: number
     changeAmount: number
@@ -166,11 +169,13 @@ export const getSalesReportFn = createServerFn({ method: 'GET' })
       }
     }
 
-    // 1. Fetch transactions within range for authenticated store
+    // 1. Fetch transactions within range for authenticated store (paid only)
     const storeTransactions = await db
       .select({
         id: transactions.id,
         total: transactions.total,
+        paymentMethod: transactions.paymentMethod,
+        paymentStatus: transactions.paymentStatus,
         paidAmount: transactions.paidAmount,
         changeAmount: transactions.changeAmount,
         createdAt: transactions.createdAt,
@@ -179,6 +184,7 @@ export const getSalesReportFn = createServerFn({ method: 'GET' })
       .where(
         and(
           eq(transactions.storeId, store.id),
+          eq(transactions.paymentStatus, 'paid'),
           gte(transactions.createdAt, startRange),
           lte(transactions.createdAt, endRange),
         ),
@@ -219,6 +225,7 @@ export const getSalesReportFn = createServerFn({ method: 'GET' })
         .where(
           and(
             eq(transactions.storeId, store.id),
+            eq(transactions.paymentStatus, 'paid'),
             gte(transactions.createdAt, startRange),
             lte(transactions.createdAt, endRange),
           ),
@@ -240,6 +247,12 @@ export const getSalesReportFn = createServerFn({ method: 'GET' })
     // 3. Summary Calculations
     const totalTransactions = storeTransactions.length
     const totalRevenue = storeTransactions.reduce((acc, t) => acc + t.total, 0)
+    const cashRevenue = storeTransactions
+      .filter((t) => t.paymentMethod === 'cash')
+      .reduce((acc, t) => acc + t.total, 0)
+    const qrisRevenue = storeTransactions
+      .filter((t) => t.paymentMethod === 'qris')
+      .reduce((acc, t) => acc + t.total, 0)
     const totalItemsSold = itemsRows.reduce((acc, i) => acc + i.quantity, 0)
     const averageTransaction =
       totalTransactions > 0 ? Math.round(totalRevenue / totalTransactions) : 0
@@ -315,6 +328,7 @@ export const getSalesReportFn = createServerFn({ method: 'GET' })
       return {
         id: t.id,
         transactionNumber: formatTransactionNumber(t.id, t.createdAt),
+        paymentMethod: (t.paymentMethod as 'cash' | 'qris') || 'cash',
         total: t.total,
         paidAmount: t.paidAmount,
         changeAmount: t.changeAmount,
@@ -330,6 +344,8 @@ export const getSalesReportFn = createServerFn({ method: 'GET' })
       endDateStr: formatDateString(endRange),
       summary: {
         totalRevenue,
+        cashRevenue,
+        qrisRevenue,
         totalTransactions,
         totalItemsSold,
         averageTransaction,

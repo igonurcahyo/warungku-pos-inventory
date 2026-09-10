@@ -13,10 +13,16 @@ import {
   Package,
   X,
   Banknote,
+  QrCode,
 } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 import { getSessionFn, getCurrentUserFn } from '@/lib/auth'
 import { getCategoriesFn } from '@/server/products'
-import { getPosProductsFn, createTransactionFn } from '@/server/pos'
+import {
+  getPosProductsFn,
+  createTransactionFn,
+  simulateQrisPaymentFn,
+} from '@/server/pos'
 
 export const Route = createFileRoute('/pos')({
   beforeLoad: async () => {
@@ -59,9 +65,19 @@ interface CartItem {
 
 interface SuccessData {
   transactionId: number
+  transactionNumber?: string
   total: number
   paidAmount: number
   changeAmount: number
+  paymentMethod: 'cash' | 'qris'
+  paymentStatus: 'pending' | 'paid'
+}
+
+interface QrisModalData {
+  transactionId: number
+  transactionNumber: string
+  total: number
+  qrPayload: string
 }
 
 function PosPage() {
@@ -71,8 +87,11 @@ function PosPage() {
   const [cart, setCart] = useState<CartItem[]>([])
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'qris'>('cash')
   const [paidAmountStr, setPaidAmountStr] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [qrisModalData, setQrisModalData] = useState<QrisModalData | null>(null)
+  const [isSimulatingQris, setIsSimulatingQris] = useState(false)
   const [successData, setSuccessData] = useState<SuccessData | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
   const [isMobileCartOpen, setIsMobileCartOpen] = useState(false)
@@ -97,8 +116,11 @@ function PosPage() {
   )
   const paidAmount = Number(paidAmountStr) || 0
   const changeAmount = paidAmount - cartTotal
-  const isPaymentInsufficient = cart.length > 0 && paidAmount < cartTotal
-  const canPay = cart.length > 0 && paidAmount >= cartTotal && !isProcessing
+  const isPaymentInsufficient =
+    paymentMethod === 'cash' && cart.length > 0 && paidAmount < cartTotal
+  const canPayCash =
+    cart.length > 0 && paidAmount >= cartTotal && !isProcessing
+  const canPayQris = cart.length > 0 && !isProcessing
 
   // Cart operations
   function addToCart(product: (typeof initialProducts)[0]) {
@@ -154,8 +176,9 @@ function PosPage() {
     setIsMobileCartOpen(false)
   }
 
-  async function handlePay() {
-    if (!canPay) return
+  // Handle Cash Payment
+  async function handlePayCash() {
+    if (!canPayCash) return
     setIsProcessing(true)
     setErrorMsg('')
 
@@ -166,6 +189,7 @@ function PosPage() {
             productId: i.productId,
             quantity: i.quantity,
           })),
+          paymentMethod: 'cash',
           paidAmount,
         },
       })
@@ -177,9 +201,68 @@ function PosPage() {
       // Refresh loader data to get updated stock
       router.invalidate()
     } catch (err: any) {
-      setErrorMsg(err.message || 'Transaksi gagal. Silakan coba lagi.')
+      setErrorMsg(err.message || 'Transaksi tunai gagal. Silakan coba lagi.')
     } finally {
       setIsProcessing(false)
+    }
+  }
+
+  // Handle QRIS Initiation
+  async function handleInitiateQris() {
+    if (!canPayQris) return
+    setIsProcessing(true)
+    setErrorMsg('')
+
+    try {
+      const result = await createTransactionFn({
+        data: {
+          items: cart.map((i) => ({
+            productId: i.productId,
+            quantity: i.quantity,
+          })),
+          paymentMethod: 'qris',
+          paidAmount: 0,
+        },
+      })
+
+      if (result.paymentMethod === 'qris' && result.qrPayload) {
+        setQrisModalData({
+          transactionId: result.transactionId,
+          transactionNumber: result.transactionNumber,
+          total: result.total,
+          qrPayload: result.qrPayload,
+        })
+        setIsMobileCartOpen(false)
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Gagal membuat transaksi QRIS.')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  // Handle QRIS Simulation (Server-Side Finalization)
+  async function handleSimulateQris() {
+    if (!qrisModalData || isSimulatingQris) return
+    setIsSimulatingQris(true)
+    setErrorMsg('')
+
+    try {
+      const result = await simulateQrisPaymentFn({
+        data: {
+          transactionId: qrisModalData.transactionId,
+        },
+      })
+
+      setQrisModalData(null)
+      setSuccessData(result)
+      setCart([])
+      setPaidAmountStr('')
+      router.invalidate()
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Simulasi pembayaran QRIS gagal.')
+    } finally {
+      setIsSimulatingQris(false)
     }
   }
 
@@ -260,9 +343,48 @@ function PosPage() {
       </div>
 
       {/* Payment Section */}
-      <div className="border-t border-wk-outline-variant/30 p-3 sm:p-wk-md space-y-2.5 sm:space-y-wk-sm bg-wk-surface-container-low/50">
-        {/* Summary */}
-        <div className="flex items-center justify-between">
+      <div className="border-t border-wk-outline-variant/30 p-3 sm:p-wk-md space-y-3 bg-wk-surface-container-low/50">
+        {/* Payment Method Selector */}
+        <div>
+          <label className="text-xs font-semibold text-wk-on-surface-variant mb-1.5 block">
+            Metode Pembayaran
+          </label>
+          <div className="grid grid-cols-2 gap-1.5 bg-wk-surface-container p-1 rounded-xl border border-wk-outline-variant/30">
+            <button
+              type="button"
+              onClick={() => {
+                setPaymentMethod('cash')
+                setErrorMsg('')
+              }}
+              className={`py-1.5 sm:py-2 px-2.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                paymentMethod === 'cash'
+                  ? 'bg-wk-primary text-wk-on-primary shadow-xs'
+                  : 'text-wk-on-surface-variant hover:text-wk-on-surface hover:bg-wk-surface-container-high'
+              }`}
+            >
+              <Banknote size={15} />
+              <span>Cash / Tunai</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setPaymentMethod('qris')
+                setErrorMsg('')
+              }}
+              className={`py-1.5 sm:py-2 px-2.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                paymentMethod === 'qris'
+                  ? 'bg-wk-primary text-wk-on-primary shadow-xs'
+                  : 'text-wk-on-surface-variant hover:text-wk-on-surface hover:bg-wk-surface-container-high'
+              }`}
+            >
+              <QrCode size={15} />
+              <span>QRIS</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Total Summary */}
+        <div className="flex items-center justify-between pt-0.5">
           <span className="text-xs sm:text-sm text-wk-on-surface-variant">
             Total Belanja
           </span>
@@ -271,50 +393,77 @@ function PosPage() {
           </span>
         </div>
 
-        {/* Payment Input */}
-        <div>
-          <label className="text-xs font-medium text-wk-on-surface-variant mb-1 block">
-            Uang Dibayar
-          </label>
-          <div className="relative">
-            <Banknote
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-wk-outline"
-            />
-            <input
-              type="number"
-              placeholder="0"
-              value={paidAmountStr}
-              onChange={(e) => setPaidAmountStr(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-wk-surface-container-lowest border border-wk-outline-variant rounded-xl text-sm text-wk-on-surface placeholder:text-wk-outline focus:outline-none focus:ring-2 focus:ring-wk-primary/30 focus:border-wk-primary transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              min={0}
-            />
-          </div>
-        </div>
+        {/* CASH SPECIFIC CONTROLS */}
+        {paymentMethod === 'cash' ? (
+          <>
+            {/* Payment Input */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-medium text-wk-on-surface-variant">
+                  Uang Diterima
+                </label>
+                {cartTotal > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setPaidAmountStr(String(cartTotal))}
+                    className="text-[11px] font-semibold text-wk-primary hover:underline cursor-pointer"
+                  >
+                    Uang Pas
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <Banknote
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-wk-outline"
+                />
+                <input
+                  type="number"
+                  placeholder="0"
+                  value={paidAmountStr}
+                  onChange={(e) => setPaidAmountStr(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-wk-surface-container-lowest border border-wk-outline-variant rounded-xl text-sm text-wk-on-surface placeholder:text-wk-outline focus:outline-none focus:ring-2 focus:ring-wk-primary/30 focus:border-wk-primary transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min={0}
+                />
+              </div>
+            </div>
 
-        {/* Change */}
-        {cart.length > 0 && paidAmount > 0 && (
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-xs sm:text-sm text-wk-on-surface-variant">
-              Kembalian
-            </span>
-            <span
-              className={`font-wk-heading text-base sm:text-lg font-bold ${
-                changeAmount >= 0 ? 'text-wk-primary' : 'text-wk-error'
-              }`}
-            >
-              {changeAmount >= 0
-                ? formatRp(changeAmount)
-                : `-${formatRp(Math.abs(changeAmount))}`}
-            </span>
-          </div>
-        )}
+            {/* Change display */}
+            {cart.length > 0 && paidAmount > 0 && (
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs sm:text-sm text-wk-on-surface-variant">
+                  Kembalian
+                </span>
+                <span
+                  className={`font-wk-heading text-base sm:text-lg font-bold ${
+                    changeAmount >= 0 ? 'text-wk-primary' : 'text-wk-error'
+                  }`}
+                >
+                  {changeAmount >= 0
+                    ? formatRp(changeAmount)
+                    : `-${formatRp(Math.abs(changeAmount))}`}
+                </span>
+              </div>
+            )}
 
-        {/* Payment warning */}
-        {isPaymentInsufficient && paidAmount > 0 && (
-          <div className="flex items-center gap-1.5 text-xs text-wk-error bg-wk-error-container/30 p-2 rounded-lg">
-            <AlertCircle size={14} className="shrink-0" />
-            <span>Pembayaran kurang.</span>
+            {/* Insufficient Cash Warning */}
+            {isPaymentInsufficient && paidAmount > 0 && (
+              <div className="flex items-center gap-1.5 text-xs text-wk-error bg-wk-error-container/30 p-2 rounded-lg">
+                <AlertCircle size={14} className="shrink-0" />
+                <span>Pembayaran kurang {formatRp(Math.abs(changeAmount))}.</span>
+              </div>
+            )}
+          </>
+        ) : (
+          /* QRIS SPECIFIC CONTROLS */
+          <div className="bg-wk-surface-container p-2.5 rounded-xl border border-wk-outline-variant/30 text-xs text-wk-on-surface-variant space-y-1">
+            <div className="flex items-center gap-1.5 font-medium text-wk-on-surface">
+              <QrCode size={14} className="text-wk-primary" />
+              <span>Simulasi QRIS Dinamis</span>
+            </div>
+            <p className="text-[11px] leading-relaxed">
+              Klik tombol di bawah untuk menampilkan QR Code dan menyelesaikan simulasi pembayaran.
+            </p>
           </div>
         )}
 
@@ -327,23 +476,43 @@ function PosPage() {
         )}
 
         {/* Pay Button */}
-        <button
-          onClick={handlePay}
-          disabled={!canPay}
-          className="w-full py-2.5 sm:py-wk-sm rounded-xl font-medium text-xs sm:text-sm transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-wk-primary text-wk-on-primary hover:bg-wk-primary-container active:scale-[0.98] shadow-sm"
-        >
-          {isProcessing ? (
-            <>
-              <Loader2 size={16} className="animate-spin" />
-              Memproses...
-            </>
-          ) : (
-            <>
-              <Banknote size={16} />
-              Bayar {cart.length > 0 ? formatRp(cartTotal) : ''}
-            </>
-          )}
-        </button>
+        {paymentMethod === 'cash' ? (
+          <button
+            onClick={handlePayCash}
+            disabled={!canPayCash}
+            className="w-full py-2.5 sm:py-wk-sm rounded-xl font-medium text-xs sm:text-sm transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-wk-primary text-wk-on-primary hover:bg-wk-primary-container active:scale-[0.98] shadow-sm"
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Memproses...
+              </>
+            ) : (
+              <>
+                <Banknote size={16} />
+                Bayar & Simpan {cart.length > 0 ? formatRp(cartTotal) : ''}
+              </>
+            )}
+          </button>
+        ) : (
+          <button
+            onClick={handleInitiateQris}
+            disabled={!canPayQris}
+            className="w-full py-2.5 sm:py-wk-sm rounded-xl font-medium text-xs sm:text-sm transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-wk-primary text-wk-on-primary hover:bg-wk-primary-container active:scale-[0.98] shadow-sm"
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Membuat Tagihan...
+              </>
+            ) : (
+              <>
+                <QrCode size={16} />
+                Buat QRIS & Bayar {cart.length > 0 ? formatRp(cartTotal) : ''}
+              </>
+            )}
+          </button>
+        )}
       </div>
     </>
   )
@@ -575,7 +744,99 @@ function PosPage() {
         </div>
       )}
 
-      {/* Success Modal */}
+      {/* QRIS SIMULATION MODAL */}
+      {qrisModalData && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
+          <div className="bg-wk-surface-container-lowest rounded-2xl shadow-2xl max-w-sm w-full p-4 sm:p-5 relative border border-wk-outline-variant/30 flex flex-col items-center">
+            {/* Close button */}
+            <button
+              onClick={() => {
+                if (!isSimulatingQris) setQrisModalData(null)
+              }}
+              disabled={isSimulatingQris}
+              className="absolute top-3.5 right-3.5 text-wk-on-surface-variant hover:text-wk-on-surface cursor-pointer p-1 rounded-full hover:bg-wk-surface-container disabled:opacity-40"
+              title="Tutup / Batal"
+            >
+              <X size={20} />
+            </button>
+
+            {/* Modal Header */}
+            <div className="text-center mb-3">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-wk-primary/10 text-wk-primary mb-1">
+                <QrCode size={13} />
+                Pembayaran QRIS
+              </span>
+              <h3 className="font-wk-heading text-lg font-bold text-wk-on-surface">
+                {user.store?.name || 'WarungKu'}
+              </h3>
+              <p className="text-xs font-mono text-wk-primary font-semibold">
+                {qrisModalData.transactionNumber}
+              </p>
+            </div>
+
+            {/* QR Code Container */}
+            <div className="p-3.5 bg-white rounded-2xl border-2 border-dashed border-wk-outline-variant/60 shadow-xs flex flex-col items-center justify-center my-1">
+              <QRCodeSVG
+                value={qrisModalData.qrPayload}
+                size={180}
+                level="M"
+                includeMargin={false}
+                className="rounded-lg"
+              />
+              <span className="text-[10px] text-gray-400 font-mono mt-2 text-center tracking-wider uppercase">
+                NMID: ID1020030040050
+              </span>
+            </div>
+
+            {/* Total & Status */}
+            <div className="w-full mt-3 bg-wk-surface-container rounded-xl p-3 text-center space-y-1">
+              <div className="text-xs text-wk-on-surface-variant">Total Tagihan</div>
+              <div className="font-wk-heading text-xl font-bold text-wk-on-surface">
+                {formatRp(qrisModalData.total)}
+              </div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full mt-1">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                <span>Menunggu pembayaran</span>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-center text-wk-on-surface-variant mt-2 px-1">
+              *Hanya untuk visual/simulasi demo, bukan pembayaran QRIS sungguhan.
+            </p>
+
+            {/* Action buttons */}
+            <div className="w-full mt-4 space-y-2">
+              <button
+                onClick={handleSimulateQris}
+                disabled={isSimulatingQris}
+                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSimulatingQris ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Memproses Pembayaran...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={16} />
+                    <span>Simulasikan Pembayaran</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => setQrisModalData(null)}
+                disabled={isSimulatingQris}
+                className="w-full py-2 rounded-xl bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-on-surface text-xs sm:text-sm font-medium transition-colors cursor-pointer border border-wk-outline-variant/30 disabled:opacity-50"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUCCESS MODAL */}
       {successData && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
           <div className="bg-wk-surface-container-lowest rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-wk-lg relative animate-in fade-in zoom-in-95 duration-200 border border-wk-outline-variant/30">
@@ -596,36 +857,74 @@ function PosPage() {
               <p className="text-xs text-wk-on-surface-variant mt-1">
                 Nomor Transaksi
               </p>
-              <span className="font-wk-heading text-base sm:text-lg font-bold text-wk-primary mt-0.5">
-                TRX-{String(successData.transactionId).padStart(4, '0')}
+              <span className="font-mono font-bold text-base sm:text-lg text-wk-primary mt-0.5">
+                {successData.transactionNumber ||
+                  `TRX-${String(successData.transactionId).padStart(4, '0')}`}
               </span>
             </div>
 
             <div className="mt-4 sm:mt-wk-lg space-y-2.5 bg-wk-surface-container rounded-xl p-3 sm:p-wk-md">
               <div className="flex items-center justify-between text-xs sm:text-sm">
-                <span className="text-wk-on-surface-variant">
-                  Total Belanja
+                <span className="text-wk-on-surface-variant">Metode Pembayaran</span>
+                <span className="font-semibold text-wk-on-surface inline-flex items-center gap-1">
+                  {successData.paymentMethod === 'qris' ? (
+                    <>
+                      <QrCode size={14} className="text-wk-primary" />
+                      <span>QRIS</span>
+                    </>
+                  ) : (
+                    <>
+                      <Banknote size={14} className="text-wk-primary" />
+                      <span>Cash / Tunai</span>
+                    </>
+                  )}
                 </span>
+              </div>
+
+              <div className="flex items-center justify-between text-xs sm:text-sm">
+                <span className="text-wk-on-surface-variant">Status</span>
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                  <CheckCircle2 size={12} />
+                  Lunas
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between text-xs sm:text-sm">
+                <span className="text-wk-on-surface-variant">Total Belanja</span>
                 <span className="font-semibold text-wk-on-surface">
                   {formatRp(successData.total)}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs sm:text-sm">
-                <span className="text-wk-on-surface-variant">
-                  Uang Dibayar
-                </span>
-                <span className="font-semibold text-wk-on-surface">
-                  {formatRp(successData.paidAmount)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-xs sm:text-sm border-t border-wk-outline-variant/30 pt-2 sm:pt-wk-sm">
-                <span className="text-wk-on-surface-variant font-medium">
-                  Kembalian
-                </span>
-                <span className="font-wk-heading text-base sm:text-lg font-bold text-wk-primary">
-                  {formatRp(successData.changeAmount)}
-                </span>
-              </div>
+
+              {successData.paymentMethod === 'cash' ? (
+                <>
+                  <div className="flex items-center justify-between text-xs sm:text-sm">
+                    <span className="text-wk-on-surface-variant">
+                      Uang Diterima
+                    </span>
+                    <span className="font-semibold text-wk-on-surface">
+                      {formatRp(successData.paidAmount)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs sm:text-sm border-t border-wk-outline-variant/30 pt-2 sm:pt-wk-sm">
+                    <span className="text-wk-on-surface-variant font-medium">
+                      Kembalian
+                    </span>
+                    <span className="font-wk-heading text-base sm:text-lg font-bold text-wk-primary">
+                      {formatRp(successData.changeAmount)}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center justify-between text-xs sm:text-sm border-t border-wk-outline-variant/30 pt-2 sm:pt-wk-sm">
+                  <span className="text-wk-on-surface-variant font-medium">
+                    Dibayar
+                  </span>
+                  <span className="font-wk-heading text-base sm:text-lg font-bold text-wk-primary">
+                    {formatRp(successData.paidAmount)}
+                  </span>
+                </div>
+              )}
             </div>
 
             <button

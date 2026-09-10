@@ -18,6 +18,9 @@ import {
   CheckCircle2,
   AlertCircle,
   FileText,
+  Banknote,
+  QrCode,
+  Clock,
 } from 'lucide-react'
 import { getSessionFn, getCurrentUserFn } from '@/lib/auth'
 import {
@@ -497,14 +500,43 @@ function TransactionsPage() {
               <div className="block md:hidden divide-y divide-wk-outline-variant/20">
                 {transactions.map((trx) => (
                   <div key={trx.id} className="p-3.5 space-y-2 hover:bg-wk-surface-container/40 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono font-bold text-xs text-wk-primary">
-                        {trx.transactionNumber}
-                      </span>
-                      <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-medium">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                        Selesai
-                      </span>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-mono font-bold text-xs text-wk-primary">
+                          {trx.transactionNumber}
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                            trx.paymentMethod === 'qris'
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-blue-100 text-blue-800'
+                          }`}
+                        >
+                          {trx.paymentMethod === 'qris' ? (
+                            <>
+                              <QrCode size={11} />
+                              QRIS
+                            </>
+                          ) : (
+                            <>
+                              <Banknote size={11} />
+                              Cash
+                            </>
+                          )}
+                        </span>
+                      </div>
+
+                      {trx.paymentStatus === 'paid' ? (
+                        <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                          Lunas
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0">
+                          <Clock size={10} className="text-amber-600" />
+                          Menunggu
+                        </span>
+                      )}
                     </div>
 
                     <div className="flex items-center justify-between text-xs">
@@ -554,6 +586,7 @@ function TransactionsPage() {
                     <tr className="bg-wk-surface-container-high text-wk-on-surface-variant text-xs uppercase tracking-wider font-semibold">
                       <th className="py-3 px-4">Nomor Transaksi</th>
                       <th className="py-3 px-4">Tanggal & Waktu</th>
+                      <th className="py-3 px-4">Metode</th>
                       <th className="py-3 px-4">Jumlah Item</th>
                       <th className="py-3 px-4">Total Pembayaran</th>
                       <th className="py-3 px-4">Status</th>
@@ -576,6 +609,29 @@ function TransactionsPage() {
                           {formatDateTime(trx.createdAt)}
                         </td>
 
+                        {/* Metode Pembayaran */}
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                              trx.paymentMethod === 'qris'
+                                ? 'bg-purple-100 text-purple-800'
+                                : 'bg-blue-100 text-blue-800'
+                            }`}
+                          >
+                            {trx.paymentMethod === 'qris' ? (
+                              <>
+                                <QrCode size={12} />
+                                QRIS
+                              </>
+                            ) : (
+                              <>
+                                <Banknote size={12} />
+                                Cash
+                              </>
+                            )}
+                          </span>
+                        </td>
+
                         {/* Jumlah Item */}
                         <td className="py-3.5 px-4 text-xs">
                           <span className="font-medium">{trx.itemCount} item</span>{' '}
@@ -591,10 +647,17 @@ function TransactionsPage() {
 
                         {/* Status */}
                         <td className="py-3.5 px-4">
-                          <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                            Selesai
-                          </span>
+                          {trx.paymentStatus === 'paid' ? (
+                            <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                              Lunas
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                              <Clock size={12} className="text-amber-600" />
+                              Menunggu
+                            </span>
+                          )}
                         </td>
 
                         {/* Aksi */}
@@ -799,30 +862,65 @@ function TransactionsPage() {
                   {/* Payment Breakdown */}
                   <div className="bg-wk-surface-container p-3 sm:p-4 rounded-xl space-y-2 border border-wk-outline-variant/30">
                     <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
+                      <span>Metode Pembayaran</span>
+                      <span className="font-semibold text-wk-on-surface inline-flex items-center gap-1">
+                        {selectedDetail.paymentMethod === 'qris' ? (
+                          <>
+                            <QrCode size={13} className="text-wk-primary" />
+                            <span>QRIS</span>
+                          </>
+                        ) : (
+                          <>
+                            <Banknote size={13} className="text-wk-primary" />
+                            <span>Cash / Tunai</span>
+                          </>
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
+                      <span>Status</span>
+                      {selectedDetail.paymentStatus === 'paid' ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                          <CheckCircle2 size={12} />
+                          Lunas
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                          <Clock size={12} />
+                          Menunggu
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
                       <span>Subtotal</span>
                       <span className="font-medium text-wk-on-surface">
                         {formatRupiah(selectedDetail.total)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
-                      <span>Status</span>
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700">
-                        <CheckCircle2 size={13} />
-                        Selesai
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
-                      <span>Uang Dibayar (Tunai)</span>
-                      <span className="font-medium text-wk-on-surface">
-                        {formatRupiah(selectedDetail.paidAmount)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
-                      <span>Kembalian</span>
-                      <span className="font-medium text-wk-on-surface">
-                        {formatRupiah(selectedDetail.changeAmount)}
-                      </span>
-                    </div>
+
+                    {selectedDetail.paymentMethod === 'cash' ? (
+                      <>
+                        <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
+                          <span>Uang Diterima</span>
+                          <span className="font-medium text-wk-on-surface">
+                            {formatRupiah(selectedDetail.paidAmount)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
+                          <span>Kembalian</span>
+                          <span className="font-medium text-wk-on-surface">
+                            {formatRupiah(selectedDetail.changeAmount)}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
+                        <span>Dibayar</span>
+                        <span className="font-medium text-wk-on-surface">
+                          {formatRupiah(selectedDetail.paidAmount)}
+                        </span>
+                      </div>
+                    )}
 
                     <div className="pt-2 border-t border-wk-outline-variant/40 flex justify-between text-sm sm:text-base font-bold text-wk-on-surface">
                       <span>Total Akhir</span>
@@ -938,13 +1036,36 @@ function TransactionsPage() {
                     <span>{formatRupiah(receiptDetail.total)}</span>
                   </div>
                   <div className="flex justify-between text-gray-700">
-                    <span>TUNAI</span>
-                    <span>{formatRupiah(receiptDetail.paidAmount)}</span>
+                    <span>METODE</span>
+                    <span className="font-semibold uppercase">
+                      {receiptDetail.paymentMethod === 'qris' ? 'QRIS' : 'CASH / TUNAI'}
+                    </span>
                   </div>
-                  <div className="flex justify-between text-gray-700">
-                    <span>KEMBALI</span>
-                    <span>{formatRupiah(receiptDetail.changeAmount)}</span>
-                  </div>
+                  {receiptDetail.paymentMethod === 'cash' ? (
+                    <>
+                      <div className="flex justify-between text-gray-700">
+                        <span>TUNAI</span>
+                        <span>{formatRupiah(receiptDetail.paidAmount)}</span>
+                      </div>
+                      <div className="flex justify-between text-gray-700">
+                        <span>KEMBALI</span>
+                        <span>{formatRupiah(receiptDetail.changeAmount)}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-between text-gray-700">
+                        <span>STATUS</span>
+                        <span className="font-semibold text-emerald-700">
+                          {receiptDetail.paymentStatus === 'paid' ? 'LUNAS' : 'PENDING'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-gray-700">
+                        <span>DIBAYAR</span>
+                        <span>{formatRupiah(receiptDetail.paidAmount)}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Footer Note */}

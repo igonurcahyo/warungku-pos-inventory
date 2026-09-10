@@ -50,7 +50,7 @@ export const getDashboardStatsFn = createServerFn({ method: 'GET' })
     const lowStockItems = storeProducts.filter((p) => p.stock > 0 && p.stock <= 5)
     const outOfStockItems = storeProducts.filter((p) => p.stock === 0)
 
-    // 2. Today's transactions
+    // 2. Today's transactions (paid only)
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
@@ -58,6 +58,8 @@ export const getDashboardStatsFn = createServerFn({ method: 'GET' })
       .select({
         id: transactions.id,
         total: transactions.total,
+        paymentMethod: transactions.paymentMethod,
+        paymentStatus: transactions.paymentStatus,
         paidAmount: transactions.paidAmount,
         changeAmount: transactions.changeAmount,
         createdAt: transactions.createdAt,
@@ -66,14 +68,21 @@ export const getDashboardStatsFn = createServerFn({ method: 'GET' })
       .where(
         and(
           eq(transactions.storeId, store.id),
+          eq(transactions.paymentStatus, 'paid'),
           gte(transactions.createdAt, startOfDay),
         ),
       )
       .orderBy(desc(transactions.createdAt))
 
     const todaySales = todayTransactions.reduce((sum, t) => sum + t.total, 0)
+    const cashSales = todayTransactions
+      .filter((t) => t.paymentMethod === 'cash')
+      .reduce((sum, t) => sum + t.total, 0)
+    const qrisSales = todayTransactions
+      .filter((t) => t.paymentMethod === 'qris')
+      .reduce((sum, t) => sum + t.total, 0)
 
-    // 3. Top selling products today
+    // 3. Top selling products today (from paid transactions only)
     const topSellingItems = await db
       .select({
         productId: transactionItems.productId,
@@ -87,6 +96,7 @@ export const getDashboardStatsFn = createServerFn({ method: 'GET' })
       .where(
         and(
           eq(transactions.storeId, store.id),
+          eq(transactions.paymentStatus, 'paid'),
           gte(transactions.createdAt, startOfDay),
         ),
       )
@@ -118,8 +128,13 @@ export const getDashboardStatsFn = createServerFn({ method: 'GET' })
       outOfStockCount: outOfStockItems.length,
       lowStockItems,
       todaySales,
+      cashSales,
+      qrisSales,
       todayTransactionCount: todayTransactions.length,
-      recentTransactions: todayTransactions.slice(0, 5),
+      recentTransactions: todayTransactions.slice(0, 5).map((t) => ({
+        ...t,
+        paymentMethod: (t.paymentMethod as 'cash' | 'qris') || 'cash',
+      })),
       topProducts,
     }
   })

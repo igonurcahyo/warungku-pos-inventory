@@ -8,7 +8,8 @@ import {
   transactions,
   transactionItems,
 } from '@/db/schema'
-import { eq, and, gte, sql, desc } from 'drizzle-orm'
+import { eq, and, gte, sql } from 'drizzle-orm'
+import { formatTransactionNumber } from '@/server/transactions'
 
 async function getRequiredStoreSession() {
   const { getSessionServer } = await import('@/lib/session.server')
@@ -74,28 +75,30 @@ export const getPosProductsFn = createServerFn({ method: 'GET' })
     return filtered
   })
 
-interface CartItem {
+export interface CartItem {
   productId: number
   quantity: number
 }
 
+export interface CreateTransactionInput {
+  items: CartItem[]
+  paymentMethod?: 'cash' | 'qris'
+  paidAmount?: number
+}
+
 export const createTransactionFn = createServerFn({ method: 'POST' })
-  .validator((data: { items: CartItem[]; paidAmount: number }) => data)
+  .validator((data: CreateTransactionInput) => data)
   .handler(async ({ data }) => {
     const { store } = await getRequiredStoreSession()
 
-    if (data.items.length === 0) {
+    if (!data.items || data.items.length === 0) {
       throw new Error('Keranjang belanja kosong.')
     }
 
-    const paidAmount = Math.round(Number(data.paidAmount))
-    if (isNaN(paidAmount) || paidAmount <= 0) {
-      throw new Error('Jumlah pembayaran tidak valid.')
-    }
+    const paymentMethod = data.paymentMethod === 'qris' ? 'qris' : 'cash'
 
     const result = await db.transaction(async (tx) => {
-      // 1. Fetch all products from DB — source of truth for price & stock
-      const productIds = data.items.map((i) => i.productId)
+      // 1. Fetch all store products from DB — source of truth for price & stock
       const dbProducts = await tx
         .select()
         .from(products)
@@ -146,42 +149,184 @@ export const createTransactionFn = createServerFn({ method: 'POST' })
         })
       }
 
-      // 3. Validate payment
-      if (paidAmount < total) {
-        throw new Error(
-          `Pembayaran kurang. Total: Rp${total.toLocaleString('id-ID')}, dibayar: Rp${paidAmount.toLocaleString('id-ID')}.`,
-        )
-      }
+      if (paymentMethod === 'cash') {
+        // Cash payment flow
+        const paidAmount = Math.round(Number(data.paidAmount))
+        if (isNaN(paidAmount) || paidAmount <= 0) {
+          throw new Error('Jumlah uang tunai tidak valid.')
+        }
 
-      const changeAmount = paidAmount - total
+        if (paidAmount < total) {
+          throw new Error(
+            `Pembayaran kurang. Total: Rp${total.toLocaleString('id-ID')}, dibayar: Rp${paidAmount.toLocaleString('id-ID')}.`,
+          )
+        }
 
-      // 4. Create transaction record
-      const txnList = await tx
-        .insert(transactions)
-        .values({
-          storeId: store.id,
+        const changeAmount = paidAmount - total
+
+        // Insert paid cash transaction
+        const txnList = await tx
+          .insert(transactions)
+          .values({
+            storeId: store.id,
+            total,
+            paidAmount,
+            changeAmount,
+            paymentMethod: 'cash',
+            paymentStatus: 'paid',
+          })
+          .returning()
+
+        const txn = txnList[0]
+
+        // Insert items + atomically decrement stock + record stockMovements
+        for (const item of validatedItems) {
+          await tx.insert(transactionItems).values({
+            transactionId: txn.id,
+            productId: item.productId,
+            productName: item.productName,
+            price: item.price,
+            quantity: item.quantity,
+            subtotal: item.subtotal,
+          })
+
+          // ponytail: single UPDATE with WHERE stock >= qty is the concurrency guard
+          const updatedList = await tx
+            .update(products)
+            .set({
+              stock: sql`${products.stock} - ${item.quantity}`,
+              updatedAt: new Date(),
+            })
+            .where(
+              and(
+                eq(products.id, item.productId),
+                eq(products.storeId, store.id),
+                gte(products.stock, item.quantity),
+              ),
+            )
+            .returning()
+
+          if (updatedList.length === 0) {
+            throw new Error(
+              `Stok "${item.productName}" berubah atau tidak mencukupi. Silakan coba lagi.`,
+            )
+          }
+
+          await tx.insert(stockMovements).values({
+            storeId: store.id,
+            productId: item.productId,
+            type: 'OUT',
+            quantity: item.quantity,
+            note: 'Penjualan POS (Tunai)',
+          })
+        }
+
+        const transactionNumber = formatTransactionNumber(txn.id, txn.createdAt)
+
+        return {
+          transactionId: txn.id,
+          transactionNumber,
           total,
           paidAmount,
           changeAmount,
-        })
-        .returning()
+          paymentMethod: 'cash' as const,
+          paymentStatus: 'paid' as const,
+        }
+      } else {
+        // QRIS initiation flow (status: pending, stock not deducted yet)
+        const txnList = await tx
+          .insert(transactions)
+          .values({
+            storeId: store.id,
+            total,
+            paidAmount: 0,
+            changeAmount: 0,
+            paymentMethod: 'qris',
+            paymentStatus: 'pending',
+          })
+          .returning()
+
+        const txn = txnList[0]
+
+        // Record items snapshot for QRIS transaction
+        for (const item of validatedItems) {
+          await tx.insert(transactionItems).values({
+            transactionId: txn.id,
+            productId: item.productId,
+            productName: item.productName,
+            price: item.price,
+            quantity: item.quantity,
+            subtotal: item.subtotal,
+          })
+        }
+
+        const transactionNumber = formatTransactionNumber(txn.id, txn.createdAt)
+        const qrPayload = `WARUNGKU|${transactionNumber}|${total}`
+
+        return {
+          transactionId: txn.id,
+          transactionNumber,
+          total,
+          paidAmount: 0,
+          changeAmount: 0,
+          paymentMethod: 'qris' as const,
+          paymentStatus: 'pending' as const,
+          qrPayload,
+        }
+      }
+    })
+
+    return result
+  })
+
+export const simulateQrisPaymentFn = createServerFn({ method: 'POST' })
+  .validator((data: { transactionId: number }) => data)
+  .handler(async ({ data }) => {
+    const { store } = await getRequiredStoreSession()
+    const txnId = Number(data.transactionId)
+    if (isNaN(txnId) || txnId <= 0) {
+      throw new Error('ID Transaksi tidak valid.')
+    }
+
+    const result = await db.transaction(async (tx) => {
+      // 1. Fetch transaction with ownership check
+      const txnList = await tx
+        .select()
+        .from(transactions)
+        .where(
+          and(
+            eq(transactions.id, txnId),
+            eq(transactions.storeId, store.id),
+          ),
+        )
+        .limit(1)
 
       const txn = txnList[0]
+      if (!txn) {
+        throw new Error('Transaksi tidak ditemukan.')
+      }
 
-      // 5. Insert transaction items + reduce stock + create stock movements
-      for (const item of validatedItems) {
-        // Insert transaction item
-        await tx.insert(transactionItems).values({
-          transactionId: txn.id,
-          productId: item.productId,
-          productName: item.productName,
-          price: item.price,
-          quantity: item.quantity,
-          subtotal: item.subtotal,
-        })
+      if (txn.paymentStatus === 'paid') {
+        throw new Error('Transaksi ini sudah dibayar sebelumnya.')
+      }
 
-        // Atomic stock reduction with guard — prevents negative stock
-        // ponytail: single UPDATE with WHERE stock >= qty is the concurrency guard
+      if (txn.paymentStatus !== 'pending') {
+        throw new Error('Status transaksi tidak valid untuk pembayaran.')
+      }
+
+      // 2. Fetch items snapshot
+      const items = await tx
+        .select()
+        .from(transactionItems)
+        .where(eq(transactionItems.transactionId, txn.id))
+
+      if (items.length === 0) {
+        throw new Error('Item transaksi tidak ditemukan.')
+      }
+
+      // 3. Atomically decrement stock and record movements
+      // ponytail: single UPDATE with WHERE stock >= qty is the concurrency guard
+      for (const item of items) {
         const updatedList = await tx
           .update(products)
           .set({
@@ -199,27 +344,55 @@ export const createTransactionFn = createServerFn({ method: 'POST' })
 
         if (updatedList.length === 0) {
           throw new Error(
-            `Stok "${item.productName}" berubah. Silakan coba lagi.`,
+            `Stok "${item.productName}" tidak mencukupi untuk menyelesaikan pembayaran.`,
           )
         }
 
-        // Create stock movement
         await tx.insert(stockMovements).values({
           storeId: store.id,
           productId: item.productId,
           type: 'OUT',
           quantity: item.quantity,
-          note: 'Penjualan POS',
+          note: 'Penjualan POS (QRIS)',
         })
       }
 
+      // 4. Update transaction: payment_status = paid, paid_amount = total, change_amount = 0
+      const updatedTxn = await tx
+        .update(transactions)
+        .set({
+          paymentStatus: 'paid',
+          paidAmount: txn.total,
+          changeAmount: 0,
+        })
+        .where(
+          and(
+            eq(transactions.id, txn.id),
+            eq(transactions.storeId, store.id),
+            eq(transactions.paymentStatus, 'pending'), // concurrency guard
+          ),
+        )
+        .returning()
+
+      if (updatedTxn.length === 0) {
+        throw new Error(
+          'Gagal memperbarui status transaksi atau transaksi telah diproses.',
+        )
+      }
+
+      const transactionNumber = formatTransactionNumber(txn.id, txn.createdAt)
+
       return {
         transactionId: txn.id,
-        total,
-        paidAmount,
-        changeAmount,
+        transactionNumber,
+        total: txn.total,
+        paidAmount: txn.total,
+        changeAmount: 0,
+        paymentMethod: 'qris' as const,
+        paymentStatus: 'paid' as const,
       }
     })
 
     return result
   })
+
