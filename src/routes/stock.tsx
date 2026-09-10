@@ -331,19 +331,19 @@ function StockManagementPage() {
       </div>
 
       {/* Top Stats Grid (Stitch UI 4 Columns) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
         {/* Total SKU */}
-        <div className="bg-wk-surface-container-low rounded-xl p-5 sm:p-6 flex flex-col justify-between shadow-xs border border-wk-outline-variant/30">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-wk-surface-container-low rounded-xl p-4 sm:p-5 flex flex-col justify-between shadow-xs border border-wk-outline-variant/30">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <span className="text-xs font-semibold uppercase tracking-wider text-wk-on-surface-variant">
               Total SKU Produk
             </span>
-            <div className="w-10 h-10 rounded-xl bg-wk-primary-fixed/30 text-wk-primary flex items-center justify-center">
-              <Package size={20} />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-wk-primary-fixed/30 text-wk-primary flex items-center justify-center shrink-0">
+              <Package size={18} className="sm:w-5 sm:h-5" />
             </div>
           </div>
           <div>
-            <div className="text-2xl sm:text-3xl font-bold text-wk-on-surface font-wk-heading">
+            <div className="text-xl sm:text-2xl font-bold text-wk-on-surface font-wk-heading truncate">
               {totalSku}
             </div>
             <div className="text-xs text-wk-on-surface-variant font-medium mt-1 flex items-center gap-1">
@@ -353,17 +353,17 @@ function StockManagementPage() {
         </div>
 
         {/* Stok Menipis */}
-        <div className="bg-wk-surface-container-low rounded-xl p-5 sm:p-6 flex flex-col justify-between shadow-xs border border-wk-outline-variant/30">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-wk-surface-container-low rounded-xl p-4 sm:p-5 flex flex-col justify-between shadow-xs border border-wk-outline-variant/30">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <span className="text-xs font-semibold uppercase tracking-wider text-wk-on-surface-variant">
               Stok Menipis
             </span>
-            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
-              <AlertTriangle size={20} />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+              <AlertTriangle size={18} className="sm:w-5 sm:h-5" />
             </div>
           </div>
           <div>
-            <div className="text-2xl sm:text-3xl font-bold text-amber-700 font-wk-heading">
+            <div className="text-xl sm:text-2xl font-bold text-amber-700 font-wk-heading truncate">
               {lowStockItems.length} SKU
             </div>
             <div className="text-xs text-amber-600 font-medium mt-1">
@@ -373,17 +373,17 @@ function StockManagementPage() {
         </div>
 
         {/* Stok Habis */}
-        <div className="bg-wk-surface-container-low rounded-xl p-5 sm:p-6 flex flex-col justify-between shadow-xs border border-wk-outline-variant/30">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-wk-surface-container-low rounded-xl p-4 sm:p-5 flex flex-col justify-between shadow-xs border border-wk-outline-variant/30">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <span className="text-xs font-semibold uppercase tracking-wider text-wk-on-surface-variant">
               Stok Habis
             </span>
-            <div className="w-10 h-10 rounded-xl bg-wk-error-container text-wk-error flex items-center justify-center">
-              <PackageX size={20} />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-wk-error-container text-wk-error flex items-center justify-center shrink-0">
+              <PackageX size={18} className="sm:w-5 sm:h-5" />
             </div>
           </div>
           <div>
-            <div className="text-2xl sm:text-3xl font-bold text-wk-error font-wk-heading">
+            <div className="text-xl sm:text-2xl font-bold text-wk-error font-wk-heading truncate">
               {outOfStockItems.length} SKU
             </div>
             <div className="text-xs text-wk-on-surface-variant font-medium mt-1">
@@ -393,17 +393,17 @@ function StockManagementPage() {
         </div>
 
         {/* Nilai Total Inventaris */}
-        <div className="bg-wk-surface-container-low rounded-xl p-5 sm:p-6 flex flex-col justify-between shadow-xs border border-wk-outline-variant/30">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-wk-surface-container-low rounded-xl p-4 sm:p-5 flex flex-col justify-between shadow-xs border border-wk-outline-variant/30">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <span className="text-xs font-semibold uppercase tracking-wider text-wk-on-surface-variant">
               Nilai Inventaris
             </span>
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
-              <WalletCards size={20} />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+              <WalletCards size={18} className="sm:w-5 sm:h-5" />
             </div>
           </div>
           <div>
-            <div className="text-xl sm:text-2xl font-bold text-wk-on-surface font-wk-heading truncate">
+            <div className="text-lg sm:text-2xl font-bold text-wk-on-surface font-wk-heading truncate">
               {formatRupiah(totalInventoryValue)}
             </div>
             <div className="text-xs text-wk-on-surface-variant font-medium mt-1">
@@ -414,19 +414,19 @@ function StockManagementPage() {
       </div>
 
       {/* Action Bar & Filter Controls */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6 bg-wk-surface-container-low p-4 rounded-xl border border-wk-outline-variant/30">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 mb-6 bg-wk-surface-container-low p-3 sm:p-4 rounded-xl border border-wk-outline-variant/30">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 flex-1">
           {/* Search Box */}
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1">
             <Search
               size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-wk-on-surface-variant"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-wk-on-surface-variant pointer-events-none"
             />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Cari nama barang, SKU, atau kategori..."
+              placeholder="Cari nama, SKU, atau kategori..."
               className="w-full bg-wk-surface-container-lowest pl-10 pr-4 py-2 rounded-xl text-sm text-wk-on-surface placeholder:text-wk-on-surface-variant border border-wk-outline-variant/50 focus:outline-none focus:ring-2 focus:ring-wk-primary"
             />
           </div>
@@ -435,7 +435,7 @@ function StockManagementPage() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="bg-wk-surface-container-lowest px-3 py-2 rounded-xl text-sm text-wk-on-surface border border-wk-outline-variant/50 focus:outline-none focus:ring-2 focus:ring-wk-primary cursor-pointer"
+            className="bg-wk-surface-container-lowest px-3 py-2 rounded-xl text-xs sm:text-sm text-wk-on-surface border border-wk-outline-variant/50 focus:outline-none focus:ring-2 focus:ring-wk-primary cursor-pointer truncate"
           >
             <option value="all">Semua Kategori</option>
             {categories.map((cat) => (
@@ -491,25 +491,53 @@ function StockManagementPage() {
         </div>
       </div>
 
-      {/* Peringatan Stok Menipis Banner/Table (if any low/out of stock items) */}
+      {/* Peringatan Stok Menipis Banner/Cards (if any low/out of stock items) */}
       {(lowStockItems.length > 0 || outOfStockItems.length > 0) && (
-        <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-5 mb-8">
-          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 sm:p-5 mb-6 sm:mb-8">
+          <div className="flex items-center justify-between mb-3 sm:mb-4 flex-wrap gap-2">
             <div className="flex items-center gap-2.5">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
               </span>
-              <h2 className="text-base font-bold text-amber-900 font-wk-heading">
+              <h2 className="text-sm sm:text-base font-bold text-amber-900 font-wk-heading">
                 Peringatan Stok Kritis & Menipis ({lowStockItems.length + outOfStockItems.length} Produk)
               </h2>
             </div>
-            <span className="text-xs text-amber-800">
-              Item di bawah atau sama dengan ambang batas (≤ {STOCK_THRESHOLDS.LOW_STOCK} unit)
+            <span className="text-[11px] sm:text-xs text-amber-800">
+              Batas minimum (≤ {STOCK_THRESHOLDS.LOW_STOCK} unit)
             </span>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile Card View for Warnings (block md:hidden) */}
+          <div className="block md:hidden space-y-2.5">
+            {[...outOfStockItems, ...lowStockItems].slice(0, 5).map((item) => (
+              <div
+                key={item.id}
+                className="p-3 bg-white/80 rounded-xl border border-amber-200/60 flex items-center justify-between gap-2"
+              >
+                  <div className="min-w-0">
+                    <div className="font-semibold text-xs text-amber-950 truncate">
+                      {item.name}
+                    </div>
+                    <div className="text-[11px] text-amber-800 mt-0.5">
+                      Sisa: <strong className={item.stock <= 0 ? 'text-red-700' : 'text-amber-900'}>{item.stock} {item.unit}</strong>
+                      <span className="mx-1">•</span>
+                      <span>Min: {STOCK_THRESHOLDS.LOW_STOCK}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => openAddModal(item.id)}
+                    className="px-2.5 py-1.5 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer shrink-0"
+                  >
+                    Restok Cepat
+                  </button>
+                </div>
+              ))}
+          </div>
+
+          {/* Desktop Table View for Warnings (hidden md:block) */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="text-xs font-semibold text-amber-900/70 border-b border-amber-200/70">
@@ -580,11 +608,11 @@ function StockManagementPage() {
       {/* Main Grid: Daftar Stok Produk & Riwayat Pergerakan */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column (col-span-2): Tabel Stok Produk */}
-        <div className="lg:col-span-2 bg-wk-surface-container-low rounded-xl p-5 sm:p-6 border border-wk-outline-variant/30 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-wk-surface-container-low rounded-xl p-4 sm:p-6 border border-wk-outline-variant/30 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <div>
-                <h2 className="text-lg font-bold font-wk-heading text-wk-on-surface">
+                <h2 className="text-base sm:text-lg font-bold font-wk-heading text-wk-on-surface">
                   Daftar Stok Produk
                 </h2>
                 <span className="text-xs text-wk-on-surface-variant">
@@ -600,94 +628,167 @@ function StockManagementPage() {
                 <p className="text-xs mt-1">Coba sesuaikan pencarian atau filter status.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="text-xs font-semibold text-wk-on-surface-variant border-b border-wk-outline-variant/30">
-                      <th className="pb-3 font-semibold">Produk</th>
-                      <th className="pb-3 font-semibold">Kategori</th>
-                      <th className="pb-3 font-semibold">Harga</th>
-                      <th className="pb-3 font-semibold">Stok Saat Ini</th>
-                      <th className="pb-3 font-semibold">Status</th>
-                      <th className="pb-3 font-semibold text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-wk-outline-variant/20 text-sm">
-                    {filteredProducts.map((p) => {
-                      const status = getStockStatusInfo(p.stock)
-                      return (
-                        <tr
-                          key={p.id}
-                          className="hover:bg-wk-surface-container/50 transition-colors"
-                        >
-                          <td className="py-3.5">
-                            <div className="font-semibold text-wk-on-surface">
+              <>
+                {/* Mobile Card View for Stock (block md:hidden) */}
+                <div className="block md:hidden divide-y divide-wk-surface-container/60 space-y-3">
+                  {filteredProducts.map((p) => {
+                    const status = getStockStatusInfo(p.stock)
+                    return (
+                      <div key={p.id} className="pt-3 first:pt-0 flex flex-col gap-2 bg-wk-surface-container-low">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="font-semibold text-xs sm:text-sm text-wk-on-surface line-clamp-1">
                               {p.name}
                             </div>
-                            <div className="text-xs text-wk-on-surface-variant">
-                              PRD-{String(p.id).padStart(3, '0')}
+                            <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-wk-on-surface-variant">
+                              <span className="font-mono">PRD-{String(p.id).padStart(3, '0')}</span>
+                              <span>•</span>
+                              <span>{p.categoryName || 'Umum'}</span>
                             </div>
-                          </td>
-                          <td className="py-3.5 text-wk-on-surface-variant text-xs">
-                            <span className="px-2 py-0.5 rounded-md bg-wk-surface-container">
-                              {p.categoryName || 'Umum'}
-                            </span>
-                          </td>
-                          <td className="py-3.5 font-medium text-wk-on-surface">
-                            {formatRupiah(p.price)}
-                          </td>
-                          <td className="py-3.5">
-                            <span className="font-bold text-wk-on-surface">
-                              {p.stock}
-                            </span>{' '}
-                            <span className="text-xs text-wk-on-surface-variant">
-                              {p.unit}
-                            </span>
-                          </td>
-                          <td className="py-3.5">
-                            <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                status.code === 'aman'
-                                  ? 'bg-emerald-100 text-emerald-800'
-                                  : status.code === 'menipis'
-                                    ? 'bg-amber-100 text-amber-800'
-                                    : 'bg-red-100 text-red-800'
-                              }`}
-                            >
-                              {status.label}
-                            </span>
-                          </td>
-                          <td className="py-3.5 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
-                              <button
-                                onClick={() => openAddModal(p.id)}
-                                title="Tambah Stok"
-                                className="p-1.5 rounded-lg bg-wk-primary-fixed/30 text-wk-primary hover:bg-wk-primary hover:text-white transition-colors cursor-pointer"
+                          </div>
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium shrink-0 ${
+                              status.code === 'aman'
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : status.code === 'menipis'
+                                  ? 'bg-amber-100 text-amber-800'
+                                  : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {status.label}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between text-xs bg-wk-surface-container-lowest px-3 py-2 rounded-lg">
+                          <div>
+                            <span className="text-wk-on-surface-variant">Stok: </span>
+                            <span className="font-bold text-wk-on-surface">{p.stock} {p.unit}</span>
+                          </div>
+                          <div>
+                            <span className="text-wk-on-surface-variant">Harga: </span>
+                            <span className="font-semibold text-wk-on-surface">{formatRupiah(p.price)}</span>
+                          </div>
+                        </div>
+
+                        {/* Quick action buttons */}
+                        <div className="flex items-center justify-end gap-1.5 pt-0.5">
+                          <button
+                            onClick={() => openAddModal(p.id)}
+                            className="px-2.5 py-1 rounded-lg bg-wk-primary-fixed/40 text-wk-primary hover:bg-wk-primary hover:text-white text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                          >
+                            <Plus size={14} />
+                            <span>Stok</span>
+                          </button>
+                          <button
+                            onClick={() => openRemoveModal(p.id)}
+                            className="px-2.5 py-1 rounded-lg bg-wk-surface-container text-wk-error hover:bg-wk-error hover:text-white text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                          >
+                            <Minus size={14} />
+                            <span>Kurang</span>
+                          </button>
+                          <button
+                            onClick={() => openHistoryModal(p.id)}
+                            className="p-1.5 rounded-lg bg-wk-surface-container text-wk-on-surface-variant hover:bg-wk-surface-container-high transition-colors cursor-pointer"
+                            title="Riwayat"
+                          >
+                            <History size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Desktop Table View (hidden md:block) */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="text-xs font-semibold text-wk-on-surface-variant border-b border-wk-outline-variant/30">
+                        <th className="pb-3 font-semibold">Produk</th>
+                        <th className="pb-3 font-semibold">Kategori</th>
+                        <th className="pb-3 font-semibold">Harga</th>
+                        <th className="pb-3 font-semibold">Stok Saat Ini</th>
+                        <th className="pb-3 font-semibold">Status</th>
+                        <th className="pb-3 font-semibold text-right">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-wk-outline-variant/20 text-sm">
+                      {filteredProducts.map((p) => {
+                        const status = getStockStatusInfo(p.stock)
+                        return (
+                          <tr
+                            key={p.id}
+                            className="hover:bg-wk-surface-container/50 transition-colors"
+                          >
+                            <td className="py-3.5">
+                              <div className="font-semibold text-wk-on-surface">
+                                {p.name}
+                              </div>
+                              <div className="text-xs text-wk-on-surface-variant">
+                                PRD-{String(p.id).padStart(3, '0')}
+                              </div>
+                            </td>
+                            <td className="py-3.5 text-wk-on-surface-variant text-xs">
+                              <span className="px-2 py-0.5 rounded-md bg-wk-surface-container">
+                                {p.categoryName || 'Umum'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 font-medium text-wk-on-surface">
+                              {formatRupiah(p.price)}
+                            </td>
+                            <td className="py-3.5">
+                              <span className="font-bold text-wk-on-surface">
+                                {p.stock}
+                              </span>{' '}
+                              <span className="text-xs text-wk-on-surface-variant">
+                                {p.unit}
+                              </span>
+                            </td>
+                            <td className="py-3.5">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  status.code === 'aman'
+                                    ? 'bg-emerald-100 text-emerald-800'
+                                    : status.code === 'menipis'
+                                      ? 'bg-amber-100 text-amber-800'
+                                      : 'bg-red-100 text-red-800'
+                                }`}
                               >
-                                <Plus size={16} />
-                              </button>
-                              <button
-                                onClick={() => openRemoveModal(p.id)}
-                                title="Kurangi Stok"
-                                className="p-1.5 rounded-lg bg-wk-surface-container text-wk-error hover:bg-wk-error hover:text-white transition-colors cursor-pointer"
-                              >
-                                <Minus size={16} />
-                              </button>
-                              <button
-                                onClick={() => openHistoryModal(p.id)}
-                                title="Lihat Riwayat"
-                                className="p-1.5 rounded-lg bg-wk-surface-container text-wk-on-surface-variant hover:bg-wk-surface-container-high transition-colors cursor-pointer"
-                              >
-                                <History size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                                {status.label}
+                              </span>
+                            </td>
+                            <td className="py-3.5 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => openAddModal(p.id)}
+                                  title="Tambah Stok"
+                                  className="p-1.5 rounded-lg bg-wk-primary-fixed/30 text-wk-primary hover:bg-wk-primary hover:text-white transition-colors cursor-pointer"
+                                >
+                                  <Plus size={16} />
+                                </button>
+                                <button
+                                  onClick={() => openRemoveModal(p.id)}
+                                  title="Kurangi Stok"
+                                  className="p-1.5 rounded-lg bg-wk-surface-container text-wk-error hover:bg-wk-error hover:text-white transition-colors cursor-pointer"
+                                >
+                                  <Minus size={16} />
+                                </button>
+                                <button
+                                  onClick={() => openHistoryModal(p.id)}
+                                  title="Lihat Riwayat"
+                                  className="p-1.5 rounded-lg bg-wk-surface-container text-wk-on-surface-variant hover:bg-wk-surface-container-high transition-colors cursor-pointer"
+                                >
+                                  <History size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -784,14 +885,14 @@ function StockManagementPage() {
 
       {/* Modal: Tambah Stok (Stok Masuk) */}
       {isAddStockOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-wk-surface rounded-2xl max-w-md w-full p-6 shadow-2xl border border-wk-outline-variant/30 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-5">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-wk-surface rounded-2xl max-w-md w-full p-4 sm:p-6 shadow-2xl border border-wk-outline-variant/30 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
                   <ArrowDownLeft size={18} />
                 </div>
-                <h3 className="text-lg font-bold text-wk-on-surface font-wk-heading">
+                <h3 className="text-base sm:text-lg font-bold text-wk-on-surface font-wk-heading">
                   Tambah Stok (Stok Masuk)
                 </h3>
               </div>
@@ -873,19 +974,19 @@ function StockManagementPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3">
+              <div className="flex items-center justify-end gap-2.5 sm:gap-3 pt-3">
                 <button
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => setIsAddStockOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-on-surface text-sm font-medium transition-colors"
+                  className="px-3.5 sm:px-4 py-2.5 rounded-xl bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-on-surface text-sm font-medium transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2.5 rounded-xl bg-wk-primary hover:bg-wk-primary-container text-white text-sm font-medium shadow-sm transition-all flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 sm:px-5 py-2.5 rounded-xl bg-wk-primary hover:bg-wk-primary-container text-white text-sm font-medium shadow-sm transition-all flex items-center gap-2 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
@@ -904,14 +1005,14 @@ function StockManagementPage() {
 
       {/* Modal: Kurangi Stok (Stok Keluar) */}
       {isRemoveStockOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-wk-surface rounded-2xl max-w-md w-full p-6 shadow-2xl border border-wk-outline-variant/30 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-5">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-wk-surface rounded-2xl max-w-md w-full p-4 sm:p-6 shadow-2xl border border-wk-outline-variant/30 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-red-100 text-red-800 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-red-100 text-red-800 flex items-center justify-center shrink-0">
                   <ArrowUpRight size={18} />
                 </div>
-                <h3 className="text-lg font-bold text-wk-on-surface font-wk-heading">
+                <h3 className="text-base sm:text-lg font-bold text-wk-on-surface font-wk-heading">
                   Kurangi Stok (Stok Keluar)
                 </h3>
               </div>
@@ -1003,19 +1104,19 @@ function StockManagementPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3">
+              <div className="flex items-center justify-end gap-2.5 sm:gap-3 pt-3">
                 <button
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => setIsRemoveStockOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-on-surface text-sm font-medium transition-colors"
+                  className="px-3.5 sm:px-4 py-2.5 rounded-xl bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-on-surface text-sm font-medium transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2.5 rounded-xl bg-red-700 hover:bg-red-800 text-white text-sm font-medium shadow-sm transition-all flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 sm:px-5 py-2.5 rounded-xl bg-red-700 hover:bg-red-800 text-white text-sm font-medium shadow-sm transition-all flex items-center gap-2 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
@@ -1034,15 +1135,15 @@ function StockManagementPage() {
 
       {/* Modal: Riwayat Pergerakan Lengkap */}
       {isHistoryModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-wk-surface rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-wk-outline-variant/30 flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-wk-surface rounded-2xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl border border-wk-outline-variant/30 flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-wk-primary-fixed/30 text-wk-primary flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-wk-primary-fixed/30 text-wk-primary flex items-center justify-center shrink-0">
                   <History size={18} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-wk-on-surface font-wk-heading">
+                  <h3 className="text-base sm:text-lg font-bold text-wk-on-surface font-wk-heading">
                     Riwayat Pergerakan Stok
                   </h3>
                   <p className="text-xs text-wk-on-surface-variant">
@@ -1059,7 +1160,7 @@ function StockManagementPage() {
             </div>
 
             {/* Filter by product inside history modal */}
-            <div className="mb-4">
+            <div className="mb-3 sm:mb-4">
               <select
                 value={historyFilterProduct}
                 onChange={(e) =>
@@ -1067,7 +1168,7 @@ function StockManagementPage() {
                     e.target.value === 'all' ? 'all' : Number(e.target.value),
                   )
                 }
-                className="w-full bg-wk-surface-container-low px-3.5 py-2 rounded-xl text-xs text-wk-on-surface border border-wk-outline-variant/50 focus:outline-none focus:ring-2 focus:ring-wk-primary cursor-pointer"
+                className="w-full bg-wk-surface-container-low px-3 py-2 rounded-xl text-xs text-wk-on-surface border border-wk-outline-variant/50 focus:outline-none focus:ring-2 focus:ring-wk-primary cursor-pointer"
               >
                 <option value="all">Tampilkan Semua Produk</option>
                 {products.map((p) => (
@@ -1088,11 +1189,11 @@ function StockManagementPage() {
                 modalHistoryItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between p-3 rounded-xl bg-wk-surface-container-low border border-wk-outline-variant/20 hover:bg-wk-surface-container transition-colors"
+                    className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-wk-surface-container-low border border-wk-outline-variant/20 hover:bg-wk-surface-container transition-colors gap-2"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                       <div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0 ${
                           item.type === 'IN'
                             ? 'bg-emerald-100 text-emerald-800'
                             : 'bg-red-100 text-red-800'
@@ -1104,25 +1205,25 @@ function StockManagementPage() {
                           <ArrowUpRight size={16} />
                         )}
                       </div>
-                      <div>
-                        <div className="font-semibold text-sm text-wk-on-surface">
+                      <div className="min-w-0">
+                        <div className="font-semibold text-xs sm:text-sm text-wk-on-surface truncate">
                           {item.productName}
                         </div>
-                        <div className="text-xs text-wk-on-surface-variant">
+                        <div className="text-[11px] sm:text-xs text-wk-on-surface-variant truncate">
                           {item.note || (item.type === 'IN' ? 'Stok Masuk' : 'Stok Keluar')}
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right shrink-0">
                       <div
-                        className={`text-sm font-bold ${
+                        className={`text-xs sm:text-sm font-bold ${
                           item.type === 'IN' ? 'text-emerald-700' : 'text-red-700'
                         }`}
                       >
                         {item.type === 'IN' ? '+' : '-'}
                         {item.quantity} {item.productUnit}
                       </div>
-                      <div className="text-[11px] text-wk-outline">
+                      <div className="text-[10px] sm:text-[11px] text-wk-outline">
                         {formatDate(item.createdAt)}
                       </div>
                     </div>
@@ -1131,10 +1232,10 @@ function StockManagementPage() {
               )}
             </div>
 
-            <div className="pt-4 mt-2 border-t border-wk-outline-variant/30 flex justify-end">
+            <div className="pt-3 sm:pt-4 mt-2 border-t border-wk-outline-variant/30 flex justify-end">
               <button
                 onClick={() => setIsHistoryModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-wk-surface-container text-wk-on-surface text-sm font-medium hover:bg-wk-surface-container-high transition-colors"
+                className="px-4 py-2 rounded-xl bg-wk-surface-container text-wk-on-surface text-xs sm:text-sm font-medium hover:bg-wk-surface-container-high transition-colors"
               >
                 Tutup
               </button>

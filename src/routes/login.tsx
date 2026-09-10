@@ -112,18 +112,18 @@ function LoginPemilik() {
   }
 
   return (
-    <main className="relative min-h-screen bg-wk-surface p-wk-xl font-wk-body text-wk-on-surface">
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-wk-md">
-        <div className="w-full max-w-md space-y-wk-xl rounded-wk-xl bg-wk-surface-container-lowest p-wk-xl shadow-sm">
+    <main className="relative min-h-screen bg-wk-surface p-3.5 sm:p-6 md:p-wk-xl font-wk-body text-wk-on-surface flex items-center justify-center">
+      <div className="w-full max-w-md">
+        <div className="w-full space-y-6 sm:space-y-wk-xl rounded-2xl sm:rounded-wk-xl bg-wk-surface-container-lowest p-5 sm:p-8 md:p-wk-xl shadow-sm border border-wk-surface-container/50">
           {/* Header: Logo + Title + Subtitle */}
-          <div className="space-y-wk-sm text-center">
-            <div className="mb-wk-md flex justify-center">
+          <div className="space-y-2 text-center">
+            <div className="mb-3 flex justify-center">
               <WarungkuLogo />
             </div>
-            <h1 className="font-wk-heading text-[32px] leading-[40px] font-bold tracking-[-0.02em] text-wk-on-surface">
+            <h1 className="font-wk-heading text-2xl sm:text-[32px] leading-tight sm:leading-[40px] font-bold tracking-[-0.02em] text-wk-on-surface">
               Masuk ke Akun Pemilik
             </h1>
-            <p className="text-[14px] leading-[20px] text-wk-on-surface-variant">
+            <p className="text-xs sm:text-sm leading-relaxed text-wk-on-surface-variant">
               Kelola kasir, stok, dan laporan warung Anda dengan mudah.
             </p>
           </div>

@@ -158,30 +158,34 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
       {/* Main Content Wrapper */}
       <div className="flex-1 lg:pl-64 flex flex-col w-full min-h-screen overflow-x-hidden">
         {/* Header */}
-        <header className="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-wk-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-wk-md sm:px-wk-lg lg:px-wk-xl transition-all duration-300">
-          <div className="flex items-center gap-wk-xs sm:gap-wk-md">
+        <header className="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-wk-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-3 sm:px-wk-lg lg:px-wk-xl transition-all duration-300">
+          <div className="flex items-center gap-1 sm:gap-wk-md">
             <button
-              className="lg:hidden p-2 -ml-2 text-wk-on-surface-variant hover:bg-wk-surface-container-high rounded-lg transition-colors"
+              className="lg:hidden p-2 -ml-1 text-wk-on-surface-variant hover:bg-wk-surface-container-high rounded-lg transition-colors cursor-pointer"
               onClick={() => setIsSidebarOpen(true)}
+              aria-label="Buka Menu"
             >
-              <Menu size={24} />
+              <Menu size={22} />
             </button>
             <div className="hidden sm:flex items-center gap-wk-xs bg-wk-primary-fixed/20 text-wk-on-primary-fixed px-wk-sm py-wk-xxs rounded-full text-xs font-medium">
               <span className="w-2 h-2 rounded-full bg-wk-primary animate-pulse"></span>
               Buka / Open
             </div>
-            <div className="hidden sm:flex items-center gap-wk-xs bg-wk-secondary-container/20 text-wk-on-secondary-container px-wk-sm py-wk-xxs rounded-full text-xs font-medium">
+            <div className="hidden md:flex items-center gap-wk-xs bg-wk-secondary-container/20 text-wk-on-secondary-container px-wk-sm py-wk-xxs rounded-full text-xs font-medium">
               <CreditCard size={14} />
               Kasir Drawer: Aktif
             </div>
           </div>
 
-          <div className="flex items-center gap-wk-sm sm:gap-wk-lg">
-            <button className="relative p-wk-xs text-wk-on-surface-variant hover:text-wk-on-surface hover:bg-wk-surface-container-high rounded-full transition-colors cursor-pointer">
-              <Bell size={20} />
+          <div className="flex items-center gap-1.5 sm:gap-wk-lg">
+            <button
+              className="relative p-1.5 sm:p-wk-xs text-wk-on-surface-variant hover:text-wk-on-surface hover:bg-wk-surface-container-high rounded-full transition-colors cursor-pointer"
+              title="Notifikasi"
+            >
+              <Bell size={18} className="sm:w-5 sm:h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-wk-error rounded-full ring-2 ring-wk-surface"></span>
             </button>
-            <div className="flex items-center gap-wk-sm hover:opacity-80 transition-opacity">
+            <div className="flex items-center gap-1.5 sm:gap-wk-sm hover:opacity-80 transition-opacity">
               <div className="text-right hidden sm:block">
                 <div className="text-sm font-medium text-wk-on-surface">
                   {user?.name || 'Owner'}
@@ -189,22 +193,22 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                 <div className="text-xs text-wk-on-surface-variant">Owner</div>
               </div>
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-wk-primary flex items-center justify-center shrink-0">
-                <User size={18} className="text-wk-on-primary" />
+                <User size={16} className="text-wk-on-primary sm:w-[18px] sm:h-[18px]" />
               </div>
             </div>
             <button
               type="button"
               onClick={() => setShowLogoutConfirm(true)}
-              className="relative p-wk-xs text-wk-error hover:bg-wk-error-container/50 rounded-full transition-colors cursor-pointer ml-wk-sm flex items-center justify-center"
+              className="relative p-1.5 sm:p-wk-xs text-wk-error hover:bg-wk-error-container/50 rounded-full transition-colors cursor-pointer ml-1 sm:ml-wk-sm flex items-center justify-center"
               title="Keluar Akun"
             >
-              <LogOut size={20} />
+              <LogOut size={18} className="sm:w-5 sm:h-5" />
             </button>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="relative mt-16 bg-wk-surface flex-1 p-wk-md sm:p-wk-lg lg:p-wk-xl max-w-full">
+        <main className="relative mt-16 bg-wk-surface flex-1 p-3 sm:p-wk-lg lg:p-wk-xl max-w-full">
           <div className="flex flex-col w-full pb-wk-xxl max-w-7xl mx-auto">
             {children}
           </div>
@@ -214,11 +218,11 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
       {/* Modal Konfirmasi Logout */}
       {showLogoutConfirm && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-wk-md animate-in fade-in duration-200"
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-3 sm:p-wk-md animate-in fade-in duration-200"
           onClick={() => !isLoggingOut && setShowLogoutConfirm(false)}
         >
           <div
-            className="bg-wk-surface-container-lowest rounded-2xl max-w-md w-full p-wk-xl shadow-2xl border border-wk-surface-container"
+            className="bg-wk-surface-container-lowest rounded-2xl max-w-md w-full p-4 sm:p-wk-xl shadow-2xl border border-wk-surface-container"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="w-12 h-12 rounded-full bg-wk-error-container text-wk-error flex items-center justify-center mb-wk-md mx-auto">
@@ -235,7 +239,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                 type="button"
                 onClick={() => setShowLogoutConfirm(false)}
                 disabled={isLoggingOut}
-                className="px-wk-lg py-2.5 rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container text-sm font-medium transition-colors cursor-pointer flex-1 disabled:opacity-50"
+                className="px-4 sm:px-wk-lg py-2.5 rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container text-sm font-medium transition-colors cursor-pointer flex-1 disabled:opacity-50"
               >
                 Batal
               </button>
@@ -243,7 +247,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="px-wk-lg py-2.5 rounded-xl bg-wk-error text-white text-sm font-medium hover:bg-red-700 transition-colors shadow-sm cursor-pointer flex-1 flex items-center justify-center gap-1.5 disabled:opacity-50"
+                className="px-4 sm:px-wk-lg py-2.5 rounded-xl bg-wk-error text-white text-sm font-medium hover:bg-red-700 transition-colors shadow-sm cursor-pointer flex-1 flex items-center justify-center gap-1.5 disabled:opacity-50"
               >
                 {isLoggingOut && <Loader2 size={16} className="animate-spin" />}
                 <span>Ya, Keluar</span>

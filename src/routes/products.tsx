@@ -381,32 +381,32 @@ function ProductsPage() {
       </div>
 
       {/* Top Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-wk-md mb-wk-xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-wk-md mb-6 sm:mb-wk-xl">
         {/* Total Produk */}
-        <div className="bg-wk-surface-container-lowest rounded-xl p-wk-lg shadow-sm flex items-center justify-between border border-wk-surface-container">
+        <div className="bg-wk-surface-container-lowest rounded-xl p-4 sm:p-wk-lg shadow-sm flex items-center justify-between border border-wk-surface-container">
           <div>
             <div className="text-xs text-wk-on-surface-variant font-medium uppercase tracking-wider mb-wk-xxs">
               Total Produk
             </div>
-            <div className="font-wk-heading text-2xl font-bold text-wk-on-surface">
+            <div className="font-wk-heading text-xl sm:text-2xl font-bold text-wk-on-surface truncate">
               {totalProducts} Item
             </div>
             <div className="text-xs text-wk-primary flex items-center mt-wk-xxs font-medium">
               <TrendingUp size={14} className="mr-1" /> Terdaftar aktif
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-wk-primary-fixed/40 text-wk-primary flex items-center justify-center">
-            <Package size={24} />
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-wk-primary-fixed/40 text-wk-primary flex items-center justify-center shrink-0">
+            <Package size={22} className="sm:w-6 sm:h-6" />
           </div>
         </div>
 
         {/* Stok Menipis */}
-        <div className="bg-wk-surface-container-lowest rounded-xl p-wk-lg shadow-sm flex items-center justify-between border border-wk-surface-container">
+        <div className="bg-wk-surface-container-lowest rounded-xl p-4 sm:p-wk-lg shadow-sm flex items-center justify-between border border-wk-surface-container">
           <div>
             <div className="text-xs text-wk-on-surface-variant font-medium uppercase tracking-wider mb-wk-xxs">
               Stok Menipis
             </div>
-            <div className="font-wk-heading text-2xl font-bold text-wk-secondary">
+            <div className="font-wk-heading text-xl sm:text-2xl font-bold text-wk-secondary truncate">
               {lowStockCount} Item
             </div>
             <div className="text-xs text-wk-secondary flex items-center mt-wk-xxs font-medium">
@@ -414,108 +414,110 @@ function ProductsPage() {
               5)
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-wk-secondary-container/30 text-wk-secondary flex items-center justify-center">
-            <AlertTriangle size={24} />
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-wk-secondary-container/30 text-wk-secondary flex items-center justify-center shrink-0">
+            <AlertTriangle size={22} className="sm:w-6 sm:h-6" />
           </div>
         </div>
 
         {/* Stok Habis */}
-        <div className="bg-wk-surface-container-lowest rounded-xl p-wk-lg shadow-sm flex items-center justify-between border border-wk-surface-container">
+        <div className="bg-wk-surface-container-lowest rounded-xl p-4 sm:p-wk-lg shadow-sm flex items-center justify-between border border-wk-surface-container">
           <div>
             <div className="text-xs text-wk-on-surface-variant font-medium uppercase tracking-wider mb-wk-xxs">
               Stok Habis
             </div>
-            <div className="font-wk-heading text-2xl font-bold text-wk-error">
+            <div className="font-wk-heading text-xl sm:text-2xl font-bold text-wk-error truncate">
               {outOfStockCount} Item
             </div>
             <div className="text-xs text-wk-error flex items-center mt-wk-xxs font-medium">
               <PackageX size={14} className="mr-1" /> Segera pesan (0)
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-wk-error-container text-wk-error flex items-center justify-center">
-            <PackageX size={24} />
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-wk-error-container text-wk-error flex items-center justify-center shrink-0">
+            <PackageX size={22} className="sm:w-6 sm:h-6" />
           </div>
         </div>
 
         {/* Total Nilai Inventaris */}
-        <div className="bg-wk-surface-container-lowest rounded-xl p-wk-lg shadow-sm flex items-center justify-between border border-wk-surface-container">
+        <div className="bg-wk-surface-container-lowest rounded-xl p-4 sm:p-wk-lg shadow-sm flex items-center justify-between border border-wk-surface-container">
           <div>
             <div className="text-xs text-wk-on-surface-variant font-medium uppercase tracking-wider mb-wk-xxs">
               Total Nilai Inventaris
             </div>
-            <div className="font-wk-heading text-2xl font-bold text-wk-on-surface">
+            <div className="font-wk-heading text-xl sm:text-2xl font-bold text-wk-on-surface truncate">
               {formatRupiah(totalInventoryValue)}
             </div>
             <div className="text-xs text-wk-on-surface-variant flex items-center mt-wk-xxs">
               Nilai stok tersimpan
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-wk-surface-container text-wk-on-surface-variant flex items-center justify-center">
-            <WalletCards size={24} />
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-wk-surface-container text-wk-on-surface-variant flex items-center justify-center shrink-0">
+            <WalletCards size={22} className="sm:w-6 sm:h-6" />
           </div>
         </div>
       </div>
 
       {/* Action Toolbar & Search */}
-      <div className="bg-wk-surface-container-lowest rounded-xl p-wk-md sm:p-wk-lg shadow-sm mb-wk-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-wk-md border border-wk-surface-container">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-wk-sm flex-1">
+      <div className="bg-wk-surface-container-lowest rounded-xl p-3 sm:p-wk-lg shadow-sm mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-wk-md border border-wk-surface-container">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-wk-sm flex-1">
           {/* Search Box */}
-          <div className="relative flex-1 min-w-[220px]">
+          <div className="relative flex-1 min-w-0">
             <Search
               size={18}
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-wk-on-surface-variant pointer-events-none"
             />
             <input
               type="text"
-              placeholder="Cari nama produk atau kode (PRD-001)..."
+              placeholder="Cari nama atau kode..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-wk-md py-2.5 bg-wk-surface rounded-xl text-wk-on-surface placeholder:text-wk-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-wk-primary border border-wk-surface-container text-sm transition-all"
             />
           </div>
 
-          {/* Category Filter */}
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-wk-md py-2.5 bg-wk-surface rounded-xl text-wk-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-wk-primary border border-wk-surface-container transition-all cursor-pointer"
-          >
-            <option value="all">Semua Kategori</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-2">
+            {/* Category Filter */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="flex-1 sm:flex-initial px-3 py-2.5 bg-wk-surface rounded-xl text-wk-on-surface text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wk-primary border border-wk-surface-container transition-all cursor-pointer truncate"
+            >
+              <option value="all">Semua Kategori</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
 
-          {/* Status Filter */}
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-wk-md py-2.5 bg-wk-surface rounded-xl text-wk-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-wk-primary border border-wk-surface-container transition-all cursor-pointer"
-          >
-            <option value="all">Semua Status</option>
-            <option value="aman">Aman (&gt; 5)</option>
-            <option value="menipis">Menipis (1-5)</option>
-            <option value="habis">Habis (0)</option>
-          </select>
+            {/* Status Filter */}
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="flex-1 sm:flex-initial px-3 py-2.5 bg-wk-surface rounded-xl text-wk-on-surface text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-wk-primary border border-wk-surface-container transition-all cursor-pointer truncate"
+            >
+              <option value="all">Semua Status</option>
+              <option value="aman">Aman (&gt; 5)</option>
+              <option value="menipis">Menipis (1-5)</option>
+              <option value="habis">Habis (0)</option>
+            </select>
+          </div>
         </div>
 
         {/* Add Product Button */}
         <button
           onClick={handleOpenAdd}
-          className="bg-wk-primary text-wk-on-primary hover:bg-wk-primary-container px-wk-lg py-2.5 rounded-xl font-medium text-sm flex items-center justify-center gap-wk-xs transition-colors shadow-sm cursor-pointer shrink-0"
+          className="bg-wk-primary text-wk-on-primary hover:bg-wk-primary-container px-wk-lg py-2.5 rounded-xl font-medium text-sm flex items-center justify-center gap-wk-xs transition-colors shadow-sm cursor-pointer shrink-0 w-full md:w-auto"
         >
           <Plus size={18} />
           <span>Tambah Produk</span>
         </button>
       </div>
 
-      {/* Data Table Container */}
+      {/* Data Table & Mobile Cards Container */}
       <div className="bg-wk-surface-container-lowest rounded-xl shadow-sm overflow-hidden mb-wk-xl border border-wk-surface-container">
         {filteredProducts.length === 0 ? (
           /* Empty State */
-          <div className="py-wk-xxl px-wk-lg text-center flex flex-col items-center justify-center">
+          <div className="py-12 sm:py-wk-xxl px-4 text-center flex flex-col items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-wk-surface-container-high flex items-center justify-center text-wk-on-surface-variant mb-wk-md">
               <Package size={32} />
             </div>
@@ -524,7 +526,7 @@ function ProductsPage() {
                 ? 'Belum Ada Produk Terdaftar'
                 : 'Tidak Ada Produk yang Cocok'}
             </h3>
-            <p className="text-sm text-wk-on-surface-variant max-w-sm mb-wk-lg">
+            <p className="text-xs sm:text-sm text-wk-on-surface-variant max-w-sm mb-wk-lg">
               {products.length === 0
                 ? 'Mulai tambahkan produk dagangan warung Anda agar siap dijual di kasir dan dipantau stoknya.'
                 : 'Coba ubah kata kunci pencarian atau sesuaikan filter kategori dan status stok Anda.'}
@@ -551,134 +553,239 @@ function ProductsPage() {
             )}
           </div>
         ) : (
-          /* Data Table */
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-wk-surface-container-low text-wk-on-surface-variant text-xs font-semibold uppercase tracking-wider border-b border-wk-surface-container">
-                  <th className="py-wk-md px-wk-lg">Kode</th>
-                  <th className="py-wk-md px-wk-lg">Nama Produk</th>
-                  <th className="py-wk-md px-wk-lg">Kategori</th>
-                  <th className="py-wk-md px-wk-lg text-right">Stok</th>
-                  <th className="py-wk-md px-wk-lg">Satuan</th>
-                  <th className="py-wk-md px-wk-lg text-right">Harga Jual</th>
-                  <th className="py-wk-md px-wk-lg text-center">Status Stok</th>
-                  <th className="py-wk-md px-wk-lg text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-wk-surface-container text-sm text-wk-on-surface">
-                {filteredProducts.map((product) => {
-                  const isOutOfStock = product.stock <= 0
-                  const isLowStock = product.stock > 0 && product.stock <= 5
+          <>
+            {/* Mobile Card View (block md:hidden) */}
+            <div className="block md:hidden divide-y divide-wk-surface-container p-3 space-y-3">
+              {filteredProducts.map((product) => {
+                const isOutOfStock = product.stock <= 0
+                const isLowStock = product.stock > 0 && product.stock <= 5
 
-                  return (
-                    <tr
-                      key={product.id}
-                      className="hover:bg-wk-surface-container-low/60 transition-colors"
-                    >
-                      {/* Kode */}
-                      <td className="py-wk-md px-wk-lg font-mono text-xs text-wk-on-surface-variant font-medium">
-                        PRD-{String(product.id).padStart(3, '0')}
-                      </td>
-
-                      {/* Nama Produk */}
-                      <td className="py-wk-md px-wk-lg font-medium text-wk-on-surface">
-                        <div className="flex items-center gap-wk-sm">
-                          <div className="w-8 h-8 rounded-lg bg-wk-surface-container flex items-center justify-center text-wk-primary shrink-0">
-                            <Package size={16} />
-                          </div>
-                          <span className="truncate max-w-xs">
-                            {product.name}
-                          </span>
+                return (
+                  <div
+                    key={product.id}
+                    className="pt-3 first:pt-0 flex flex-col gap-2.5 bg-wk-surface-container-lowest"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start gap-2.5 min-w-0">
+                        <div className="w-9 h-9 rounded-lg bg-wk-surface-container flex items-center justify-center text-wk-primary shrink-0 mt-0.5">
+                          <Package size={18} />
                         </div>
-                      </td>
+                        <div className="min-w-0">
+                          <div className="font-semibold text-sm text-wk-on-surface leading-tight line-clamp-1">
+                            {product.name}
+                          </div>
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            <span className="font-mono text-[11px] text-wk-on-surface-variant font-medium">
+                              PRD-{String(product.id).padStart(3, '0')}
+                            </span>
+                            <span className="text-[10px] text-wk-outline">•</span>
+                            <span className="px-2 py-0.5 rounded bg-wk-surface-container text-[11px] font-medium text-wk-on-surface-variant">
+                              {product.categoryName || 'Umum'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
 
-                      {/* Kategori */}
-                      <td className="py-wk-md px-wk-lg text-wk-on-surface-variant">
-                        <span className="inline-block px-2.5 py-1 rounded-lg bg-wk-surface-container text-xs font-medium">
-                          {product.categoryName || 'Tanpa Kategori'}
-                        </span>
-                      </td>
+                      {/* Status Badge */}
+                      <span className="shrink-0">
+                        {isOutOfStock ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-wk-error-container text-wk-error">
+                            Habis
+                          </span>
+                        ) : isLowStock ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-wk-secondary-container/30 text-wk-secondary">
+                            Menipis
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-wk-primary-fixed/30 text-wk-primary">
+                            Aman
+                          </span>
+                        )}
+                      </span>
+                    </div>
 
-                      {/* Stok */}
-                      <td className="py-wk-md px-wk-lg text-right font-semibold">
+                    {/* Stock & Price Row */}
+                    <div className="flex items-center justify-between text-xs bg-wk-surface-container-low/50 px-3 py-2 rounded-lg">
+                      <div>
+                        <span className="text-wk-on-surface-variant">Stok: </span>
                         <span
-                          className={
+                          className={`font-bold ${
                             isOutOfStock
                               ? 'text-wk-error'
                               : isLowStock
                                 ? 'text-wk-secondary'
                                 : 'text-wk-on-surface'
-                          }
+                          }`}
                         >
-                          {product.stock}
+                          {product.stock} {product.unit}
                         </span>
-                      </td>
+                      </div>
+                      <div>
+                        <span className="text-wk-on-surface-variant">Harga: </span>
+                        <span className="font-bold text-wk-primary">
+                          {formatRupiah(product.price)}
+                        </span>
+                      </div>
+                    </div>
 
-                      {/* Satuan */}
-                      <td className="py-wk-md px-wk-lg text-wk-on-surface-variant">
-                        {product.unit}
-                      </td>
+                    {/* Actions Row */}
+                    <div className="flex items-center justify-end gap-1.5 pt-1">
+                      <button
+                        onClick={() => handleOpenQuickStock(product)}
+                        className="px-2.5 py-1.5 rounded-lg bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-on-surface-variant hover:text-wk-primary text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <Layers size={14} />
+                        <span>Stok Cepat</span>
+                      </button>
+                      <button
+                        onClick={() => handleOpenEdit(product)}
+                        className="p-1.5 rounded-lg bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-on-surface-variant hover:text-wk-on-surface transition-colors cursor-pointer"
+                        title="Edit Produk"
+                      >
+                        <Pencil size={15} />
+                      </button>
+                      <button
+                        onClick={() => setDeletingProduct(product)}
+                        className="p-1.5 rounded-lg bg-wk-surface-container hover:bg-wk-error-container text-wk-on-surface-variant hover:text-wk-error transition-colors cursor-pointer"
+                        title="Hapus Produk"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
 
-                      {/* Harga Jual */}
-                      <td className="py-wk-md px-wk-lg text-right font-semibold text-wk-primary">
-                        {formatRupiah(product.price)}
-                      </td>
+            {/* Desktop Data Table (hidden md:block) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-wk-surface-container-low text-wk-on-surface-variant text-xs font-semibold uppercase tracking-wider border-b border-wk-surface-container">
+                    <th className="py-wk-md px-wk-lg">Kode</th>
+                    <th className="py-wk-md px-wk-lg">Nama Produk</th>
+                    <th className="py-wk-md px-wk-lg">Kategori</th>
+                    <th className="py-wk-md px-wk-lg text-right">Stok</th>
+                    <th className="py-wk-md px-wk-lg">Satuan</th>
+                    <th className="py-wk-md px-wk-lg text-right">Harga Jual</th>
+                    <th className="py-wk-md px-wk-lg text-center">Status Stok</th>
+                    <th className="py-wk-md px-wk-lg text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-wk-surface-container text-sm text-wk-on-surface">
+                  {filteredProducts.map((product) => {
+                    const isOutOfStock = product.stock <= 0
+                    const isLowStock = product.stock > 0 && product.stock <= 5
 
-                      {/* Status Stok Badge */}
-                      <td className="py-wk-md px-wk-lg text-center">
-                        {isOutOfStock ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wk-error-container text-wk-error">
-                            Habis
+                    return (
+                      <tr
+                        key={product.id}
+                        className="hover:bg-wk-surface-container-low/60 transition-colors"
+                      >
+                        {/* Kode */}
+                        <td className="py-wk-md px-wk-lg font-mono text-xs text-wk-on-surface-variant font-medium">
+                          PRD-{String(product.id).padStart(3, '0')}
+                        </td>
+
+                        {/* Nama Produk */}
+                        <td className="py-wk-md px-wk-lg font-medium text-wk-on-surface">
+                          <div className="flex items-center gap-wk-sm">
+                            <div className="w-8 h-8 rounded-lg bg-wk-surface-container flex items-center justify-center text-wk-primary shrink-0">
+                              <Package size={16} />
+                            </div>
+                            <span className="truncate max-w-xs">
+                              {product.name}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Kategori */}
+                        <td className="py-wk-md px-wk-lg text-wk-on-surface-variant">
+                          <span className="inline-block px-2.5 py-1 rounded-lg bg-wk-surface-container text-xs font-medium">
+                            {product.categoryName || 'Tanpa Kategori'}
                           </span>
-                        ) : isLowStock ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wk-secondary-container/30 text-wk-secondary">
-                            Menipis
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wk-primary-fixed/30 text-wk-primary">
-                            Aman
-                          </span>
-                        )}
-                      </td>
+                        </td>
 
-                      {/* Aksi */}
-                      <td className="py-wk-md px-wk-lg text-center">
-                        <div className="flex items-center justify-center gap-1">
-                          <button
-                            onClick={() => handleOpenQuickStock(product)}
-                            className="p-1.5 rounded-lg hover:bg-wk-surface-container text-wk-on-surface-variant hover:text-wk-primary transition-colors cursor-pointer"
-                            title="Update Stok Cepat"
+                        {/* Stok */}
+                        <td className="py-wk-md px-wk-lg text-right font-semibold">
+                          <span
+                            className={
+                              isOutOfStock
+                                ? 'text-wk-error'
+                                : isLowStock
+                                  ? 'text-wk-secondary'
+                                  : 'text-wk-on-surface'
+                            }
                           >
-                            <Layers size={16} />
-                          </button>
-                          <button
-                            onClick={() => handleOpenEdit(product)}
-                            className="p-1.5 rounded-lg hover:bg-wk-surface-container text-wk-on-surface-variant hover:text-wk-on-surface transition-colors cursor-pointer"
-                            title="Edit Produk"
-                          >
-                            <Pencil size={16} />
-                          </button>
-                          <button
-                            onClick={() => setDeletingProduct(product)}
-                            className="p-1.5 rounded-lg hover:bg-wk-surface-container text-wk-on-surface-variant hover:text-wk-error transition-colors cursor-pointer"
-                            title="Hapus Produk"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+                            {product.stock}
+                          </span>
+                        </td>
+
+                        {/* Satuan */}
+                        <td className="py-wk-md px-wk-lg text-wk-on-surface-variant">
+                          {product.unit}
+                        </td>
+
+                        {/* Harga Jual */}
+                        <td className="py-wk-md px-wk-lg text-right font-semibold text-wk-primary">
+                          {formatRupiah(product.price)}
+                        </td>
+
+                        {/* Status Stok Badge */}
+                        <td className="py-wk-md px-wk-lg text-center">
+                          {isOutOfStock ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wk-error-container text-wk-error">
+                              Habis
+                            </span>
+                          ) : isLowStock ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wk-secondary-container/30 text-wk-secondary">
+                              Menipis
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wk-primary-fixed/30 text-wk-primary">
+                              Aman
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Aksi */}
+                        <td className="py-wk-md px-wk-lg text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              onClick={() => handleOpenQuickStock(product)}
+                              className="p-1.5 rounded-lg hover:bg-wk-surface-container text-wk-on-surface-variant hover:text-wk-primary transition-colors cursor-pointer"
+                              title="Update Stok Cepat"
+                            >
+                              <Layers size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleOpenEdit(product)}
+                              className="p-1.5 rounded-lg hover:bg-wk-surface-container text-wk-on-surface-variant hover:text-wk-on-surface transition-colors cursor-pointer"
+                              title="Edit Produk"
+                            >
+                              <Pencil size={16} />
+                            </button>
+                            <button
+                              onClick={() => setDeletingProduct(product)}
+                              className="p-1.5 rounded-lg hover:bg-wk-surface-container text-wk-on-surface-variant hover:text-wk-error transition-colors cursor-pointer"
+                              title="Hapus Produk"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
 
         {/* Table Footer */}
         {filteredProducts.length > 0 && (
-          <div className="p-wk-md bg-wk-surface-container-low/40 border-t border-wk-surface-container flex items-center justify-between text-xs text-wk-on-surface-variant">
+          <div className="p-3 sm:p-wk-md bg-wk-surface-container-low/40 border-t border-wk-surface-container flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-wk-on-surface-variant gap-1.5 sm:gap-0">
             <div>
               Menampilkan{' '}
               <span className="font-semibold text-wk-on-surface">
@@ -690,7 +797,7 @@ function ProductsPage() {
               </span>{' '}
               produk
             </div>
-            <div>
+            <div className="text-[11px] sm:text-xs">
               Status: Aman ({products.filter((p) => p.stock > 5).length}) •
               Menipis ({lowStockCount}) • Habis ({outOfStockCount})
             </div>
@@ -700,11 +807,11 @@ function ProductsPage() {
 
       {/* MODAL: Tambah / Edit Produk */}
       {(isAddModalOpen || editingProduct) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-wk-md animate-in fade-in duration-200">
-          <div className="bg-wk-surface-container-lowest rounded-2xl max-w-lg w-full p-wk-xl shadow-2xl border border-wk-surface-container max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-wk-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 sm:p-wk-md animate-in fade-in duration-200">
+          <div className="bg-wk-surface-container-lowest rounded-2xl max-w-lg w-full p-4 sm:p-wk-xl shadow-2xl border border-wk-surface-container max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 sm:mb-wk-lg">
               <div>
-                <h3 className="font-wk-heading text-xl font-bold text-wk-on-surface">
+                <h3 className="font-wk-heading text-lg sm:text-xl font-bold text-wk-on-surface">
                   {editingProduct ? 'Edit Produk' : 'Tambah Produk Baru'}
                 </h3>
                 <p className="text-xs text-wk-on-surface-variant mt-0.5">
@@ -817,7 +924,7 @@ function ProductsPage() {
               </div>
 
               {/* Harga & Satuan Grid */}
-              <div className="grid grid-cols-2 gap-wk-md">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-wk-md">
                 {/* Harga Jual */}
                 <div>
                   <label className="block text-xs font-semibold text-wk-on-surface mb-1">
@@ -891,7 +998,7 @@ function ProductsPage() {
                     setIsAddModalOpen(false)
                     setEditingProduct(null)
                   }}
-                  className="px-wk-lg py-2.5 rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container text-sm font-medium transition-colors cursor-pointer"
+                  className="px-4 sm:px-wk-lg py-2.5 rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container text-sm font-medium transition-colors cursor-pointer"
                   disabled={isSubmitting}
                 >
                   Batal
@@ -899,7 +1006,7 @@ function ProductsPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-wk-lg py-2.5 rounded-xl bg-wk-primary text-wk-on-primary font-medium text-sm hover:bg-wk-primary-container transition-colors shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                  className="px-4 sm:px-wk-lg py-2.5 rounded-xl bg-wk-primary text-wk-on-primary font-medium text-sm hover:bg-wk-primary-container transition-colors shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
                 >
                   {isSubmitting && (
                     <Loader2 size={16} className="animate-spin" />
@@ -916,8 +1023,8 @@ function ProductsPage() {
 
       {/* MODAL: Konfirmasi Hapus Produk */}
       {deletingProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-wk-md animate-in fade-in duration-200">
-          <div className="bg-wk-surface-container-lowest rounded-2xl max-w-md w-full p-wk-xl shadow-2xl border border-wk-surface-container">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 sm:p-wk-md animate-in fade-in duration-200">
+          <div className="bg-wk-surface-container-lowest rounded-2xl max-w-md w-full p-4 sm:p-wk-xl shadow-2xl border border-wk-surface-container">
             <div className="w-12 h-12 rounded-full bg-wk-error-container text-wk-error flex items-center justify-center mb-wk-md mx-auto">
               <Trash2 size={24} />
             </div>
@@ -936,7 +1043,7 @@ function ProductsPage() {
                 type="button"
                 onClick={() => setDeletingProduct(null)}
                 disabled={isSubmitting}
-                className="px-wk-lg py-2.5 rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container text-sm font-medium transition-colors cursor-pointer flex-1"
+                className="px-4 sm:px-wk-lg py-2.5 rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container text-sm font-medium transition-colors cursor-pointer flex-1"
               >
                 Batal
               </button>
@@ -944,7 +1051,7 @@ function ProductsPage() {
                 type="button"
                 onClick={handleConfirmDelete}
                 disabled={isSubmitting}
-                className="px-wk-lg py-2.5 rounded-xl bg-wk-error text-white text-sm font-medium hover:bg-red-700 transition-colors shadow-sm cursor-pointer flex-1 flex items-center justify-center gap-1.5 disabled:opacity-50"
+                className="px-4 sm:px-wk-lg py-2.5 rounded-xl bg-wk-error text-white text-sm font-medium hover:bg-red-700 transition-colors shadow-sm cursor-pointer flex-1 flex items-center justify-center gap-1.5 disabled:opacity-50"
               >
                 {isSubmitting && <Loader2 size={16} className="animate-spin" />}
                 <span>Ya, Hapus</span>
@@ -956,8 +1063,8 @@ function ProductsPage() {
 
       {/* MODAL: Update Stok Cepat */}
       {quickStockProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-wk-md animate-in fade-in duration-200">
-          <div className="bg-wk-surface-container-lowest rounded-2xl max-w-sm w-full p-wk-xl shadow-2xl border border-wk-surface-container">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 sm:p-wk-md animate-in fade-in duration-200">
+          <div className="bg-wk-surface-container-lowest rounded-2xl max-w-sm w-full p-4 sm:p-wk-xl shadow-2xl border border-wk-surface-container">
             <div className="flex items-center justify-between mb-wk-md">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-wk-primary-fixed/30 text-wk-primary flex items-center justify-center">
@@ -1016,7 +1123,7 @@ function ProductsPage() {
                 type="button"
                 onClick={() => setQuickStockProduct(null)}
                 disabled={isSubmitting}
-                className="px-wk-md py-2 rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container text-xs font-medium transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl text-wk-on-surface-variant hover:bg-wk-surface-container text-xs font-medium transition-colors cursor-pointer"
               >
                 Batal
               </button>
@@ -1024,7 +1131,7 @@ function ProductsPage() {
                 type="button"
                 onClick={handleSaveQuickStock}
                 disabled={isSubmitting}
-                className="px-wk-lg py-2 rounded-xl bg-wk-primary text-wk-on-primary font-medium text-xs hover:bg-wk-primary-container transition-colors shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl bg-wk-primary text-wk-on-primary font-medium text-xs hover:bg-wk-primary-container transition-colors shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
               >
                 {isSubmitting && <Loader2 size={14} className="animate-spin" />}
                 <span>Simpan Stok</span>

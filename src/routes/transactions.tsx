@@ -1,4 +1,4 @@
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { DashboardLayout } from '../components/layout/DashboardLayout'
 import {
@@ -82,15 +82,6 @@ function formatDateTime(dateInput: Date | string): string {
     minute: '2-digit',
   })
   return `${day}, ${time}`
-}
-
-function formatDateOnly(dateInput: Date | string): string {
-  const d = new Date(dateInput)
-  return d.toLocaleDateString('id-ID', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })
 }
 
 function TransactionsPage() {
@@ -241,18 +232,18 @@ function TransactionsPage() {
 
   return (
     <DashboardLayout user={user}>
-      <div className="flex flex-col w-full space-y-wk-lg">
-        {/* Top Header & Action */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-wk-md">
+      <div className="space-y-4 sm:space-y-wk-lg">
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-wk-md">
           <div>
-            <div className="flex items-center gap-wk-xs text-sm font-medium text-wk-on-surface-variant mb-wk-xxs">
-              <Receipt size={16} className="text-wk-primary" />
+            <div className="flex items-center gap-2 text-xs text-wk-primary font-medium mb-1">
+              <Receipt size={14} />
               <span>Riwayat Transaksi Penjualan</span>
             </div>
-            <h1 className="font-wk-heading text-2xl lg:text-3xl font-bold tracking-tight text-wk-on-surface">
+            <h1 className="font-wk-heading text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-wk-on-surface">
               Riwayat Transaksi
             </h1>
-            <p className="text-sm text-wk-on-surface-variant mt-wk-xxs">
+            <p className="text-xs sm:text-sm text-wk-on-surface-variant mt-0.5">
               Kelola dan pantau seluruh transaksi penjualan harian{' '}
               <span className="font-semibold text-wk-on-surface">
                 {user.store?.name || 'Warung Anda'}
@@ -261,103 +252,103 @@ function TransactionsPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-wk-sm">
+          <div className="flex items-center gap-2">
             <Link
               to="/pos"
-              className="flex items-center gap-wk-xs bg-wk-primary hover:bg-wk-primary/90 text-wk-on-primary px-wk-md py-wk-sm rounded-xl text-sm font-medium transition-all shadow-sm"
+              className="flex items-center justify-center gap-1.5 bg-wk-primary hover:bg-wk-primary/90 text-wk-on-primary px-3.5 py-2 sm:px-wk-md sm:py-wk-sm rounded-xl text-xs sm:text-sm font-medium transition-all shadow-xs w-full sm:w-auto"
             >
-              <ShoppingCart size={18} />
+              <ShoppingCart size={16} />
               <span>Buka Kasir POS</span>
             </Link>
           </div>
         </div>
 
         {/* Metric Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-wk-md">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-wk-md">
           {/* Card 1: Total Transaksi */}
-          <div className="bg-wk-surface-container-low rounded-xl p-wk-lg shadow-sm hover:shadow transition-all relative overflow-hidden group border border-wk-outline-variant/30">
-            <div className="flex items-center justify-between mb-wk-sm">
-              <span className="text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
+          <div className="bg-wk-surface-container-low rounded-xl p-3.5 sm:p-5 lg:p-wk-lg shadow-xs hover:shadow transition-all relative overflow-hidden group border border-wk-outline-variant/30">
+            <div className="flex items-center justify-between mb-2 sm:mb-wk-sm">
+              <span className="text-[11px] sm:text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
                 Total Transaksi
               </span>
-              <div className="w-10 h-10 rounded-lg bg-wk-primary-fixed/20 text-wk-primary flex items-center justify-center">
-                <Receipt size={20} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-wk-primary-fixed/20 text-wk-primary flex items-center justify-center">
+                <Receipt size={18} />
               </div>
             </div>
-            <div className="text-2xl lg:text-3xl font-bold font-wk-heading text-wk-on-surface">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold font-wk-heading text-wk-on-surface">
               {summary.totalTransactions.toLocaleString('id-ID')}
             </div>
-            <div className="flex items-center gap-wk-xxs mt-wk-xs text-xs text-wk-on-surface-variant">
+            <div className="flex items-center gap-1 mt-1 text-[11px] sm:text-xs text-wk-on-surface-variant">
               <span>Semua transaksi tercatat</span>
             </div>
           </div>
 
           {/* Card 2: Total Pendapatan */}
-          <div className="bg-wk-surface-container-low rounded-xl p-wk-lg shadow-sm hover:shadow transition-all relative overflow-hidden group border border-wk-outline-variant/30">
-            <div className="flex items-center justify-between mb-wk-sm">
-              <span className="text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
+          <div className="bg-wk-surface-container-low rounded-xl p-3.5 sm:p-5 lg:p-wk-lg shadow-xs hover:shadow transition-all relative overflow-hidden group border border-wk-outline-variant/30">
+            <div className="flex items-center justify-between mb-2 sm:mb-wk-sm">
+              <span className="text-[11px] sm:text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
                 Total Pendapatan
               </span>
-              <div className="w-10 h-10 rounded-lg bg-wk-secondary-container/20 text-wk-secondary flex items-center justify-center">
-                <CreditCard size={20} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-wk-secondary-container/20 text-wk-secondary flex items-center justify-center">
+                <CreditCard size={18} />
               </div>
             </div>
-            <div className="text-2xl lg:text-3xl font-bold font-wk-heading text-wk-on-surface truncate">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold font-wk-heading text-wk-on-surface truncate">
               {formatRupiah(summary.totalRevenue)}
             </div>
-            <div className="flex items-center gap-wk-xxs mt-wk-xs text-xs text-wk-secondary font-medium">
-              <TrendingUp size={14} />
-              <span>Rata-rata {formatRupiah(summary.averagePerTransaction)} / trx</span>
+            <div className="flex items-center gap-1 mt-1 text-[11px] sm:text-xs text-wk-secondary font-medium">
+              <TrendingUp size={13} />
+              <span className="truncate">Rata-rata {formatRupiah(summary.averagePerTransaction)} / trx</span>
             </div>
           </div>
 
           {/* Card 3: Transaksi Hari Ini */}
-          <div className="bg-wk-surface-container-low rounded-xl p-wk-lg shadow-sm hover:shadow transition-all relative overflow-hidden group border border-wk-outline-variant/30">
-            <div className="flex items-center justify-between mb-wk-sm">
-              <span className="text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
+          <div className="bg-wk-surface-container-low rounded-xl p-3.5 sm:p-5 lg:p-wk-lg shadow-xs hover:shadow transition-all relative overflow-hidden group border border-wk-outline-variant/30">
+            <div className="flex items-center justify-between mb-2 sm:mb-wk-sm">
+              <span className="text-[11px] sm:text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
                 Transaksi Hari Ini
               </span>
-              <div className="w-10 h-10 rounded-lg bg-wk-primary/10 text-wk-primary flex items-center justify-center">
-                <Calendar size={20} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-wk-primary/10 text-wk-primary flex items-center justify-center">
+                <Calendar size={18} />
               </div>
             </div>
-            <div className="text-2xl lg:text-3xl font-bold font-wk-heading text-wk-on-surface">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold font-wk-heading text-wk-on-surface">
               {summary.todayTransactions.toLocaleString('id-ID')}
             </div>
-            <div className="flex items-center gap-wk-xxs mt-wk-xs text-xs text-wk-primary font-medium">
-              <CheckCircle2 size={14} />
+            <div className="flex items-center gap-1 mt-1 text-[11px] sm:text-xs text-wk-primary font-medium">
+              <CheckCircle2 size={13} />
               <span>Transaksi selesai hari ini</span>
             </div>
           </div>
 
           {/* Card 4: Pendapatan Hari Ini */}
-          <div className="bg-wk-surface-container-low rounded-xl p-wk-lg shadow-sm hover:shadow transition-all relative overflow-hidden group border border-wk-outline-variant/30">
-            <div className="flex items-center justify-between mb-wk-sm">
-              <span className="text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
+          <div className="bg-wk-surface-container-low rounded-xl p-3.5 sm:p-5 lg:p-wk-lg shadow-xs hover:shadow transition-all relative overflow-hidden group border border-wk-outline-variant/30">
+            <div className="flex items-center justify-between mb-2 sm:mb-wk-sm">
+              <span className="text-[11px] sm:text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
                 Pendapatan Hari Ini
               </span>
-              <div className="w-10 h-10 rounded-lg bg-wk-surface-container-high text-wk-on-surface flex items-center justify-center">
-                <TrendingUp size={20} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-wk-surface-container-high text-wk-on-surface flex items-center justify-center">
+                <TrendingUp size={18} />
               </div>
             </div>
-            <div className="text-2xl lg:text-3xl font-bold font-wk-heading text-wk-on-surface truncate">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold font-wk-heading text-wk-on-surface truncate">
               {formatRupiah(summary.todayRevenue)}
             </div>
-            <div className="flex items-center gap-wk-xxs mt-wk-xs text-xs text-wk-on-surface-variant">
+            <div className="flex items-center gap-1 mt-1 text-[11px] sm:text-xs text-wk-on-surface-variant">
               <span>Penerimaan tunai hari ini</span>
             </div>
           </div>
         </div>
 
         {/* Filter & Search Card */}
-        <div className="bg-wk-surface-container-low rounded-xl p-wk-md shadow-sm border border-wk-outline-variant/30 flex flex-col gap-wk-md">
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-wk-md">
+        <div className="bg-wk-surface-container-low rounded-xl p-3 sm:p-wk-md shadow-xs border border-wk-outline-variant/30 flex flex-col gap-3 sm:gap-wk-md">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-wk-md">
             {/* Search Input */}
             <form
               onSubmit={handleSearchSubmit}
               className="relative flex-1 max-w-full lg:max-w-md"
             >
-              <span className="absolute inset-y-0 left-0 flex items-center pl-wk-md pointer-events-none text-wk-on-surface-variant">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-wk-on-surface-variant">
                 <Search size={18} />
               </span>
               <input
@@ -365,7 +356,7 @@ function TransactionsPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Cari transaksi..."
-                className="w-full bg-wk-surface py-2.5 pl-10 pr-10 rounded-lg text-sm text-wk-on-surface border border-wk-outline-variant/40 focus:outline-none focus:ring-2 focus:ring-wk-primary focus:border-transparent transition-all"
+                className="w-full bg-wk-surface py-2.5 pl-10 pr-10 rounded-xl text-xs sm:text-sm text-wk-on-surface border border-wk-outline-variant/40 focus:outline-none focus:ring-2 focus:ring-wk-primary focus:border-transparent transition-all"
               />
               {search && (
                 <button
@@ -382,8 +373,8 @@ function TransactionsPage() {
             </form>
 
             {/* Custom Date & Reset */}
-            <div className="flex flex-wrap items-center gap-wk-sm justify-end">
-              <div className="flex items-center gap-wk-xs bg-wk-surface p-1 rounded-lg border border-wk-outline-variant/40">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-wk-sm justify-between sm:justify-end">
+              <div className="flex items-center gap-1 bg-wk-surface p-1 rounded-xl border border-wk-outline-variant/40 flex-1 sm:flex-initial">
                 <input
                   type="date"
                   value={customDate}
@@ -391,13 +382,13 @@ function TransactionsPage() {
                     setCustomDate(e.target.value)
                     setPeriod('custom')
                   }}
-                  className="bg-transparent py-1.5 px-wk-sm text-sm text-wk-on-surface focus:outline-none"
+                  className="bg-transparent py-1 px-2 text-xs sm:text-sm text-wk-on-surface focus:outline-none flex-1"
                 />
                 <button
                   type="button"
                   disabled={!customDate || isPending}
                   onClick={handleCustomDateApply}
-                  className="bg-wk-primary text-wk-on-primary px-wk-sm py-1.5 rounded text-xs font-medium hover:bg-wk-primary/90 disabled:opacity-50 transition-colors"
+                  className="bg-wk-primary text-wk-on-primary px-2.5 py-1.5 rounded-lg text-xs font-medium hover:bg-wk-primary/90 disabled:opacity-50 transition-colors shrink-0"
                 >
                   Terapkan
                 </button>
@@ -407,18 +398,18 @@ function TransactionsPage() {
                 <button
                   type="button"
                   onClick={handleResetFilters}
-                  className="flex items-center gap-1 text-xs font-medium text-wk-error hover:bg-wk-error-container/40 px-wk-sm py-2 rounded-lg transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-xs font-medium text-wk-error hover:bg-wk-error-container/40 px-2.5 py-1.5 rounded-xl transition-colors cursor-pointer"
                 >
-                  <RotateCcw size={14} />
-                  <span>Reset Filter</span>
+                  <RotateCcw size={13} />
+                  <span>Reset</span>
                 </button>
               )}
             </div>
           </div>
 
           {/* Quick Period Filter Buttons */}
-          <div className="flex flex-wrap items-center gap-wk-xs pt-wk-xs border-t border-wk-outline-variant/20">
-            <span className="text-xs text-wk-on-surface-variant font-medium mr-wk-xs">
+          <div className="flex items-center gap-1.5 pt-2 border-t border-wk-outline-variant/20 overflow-x-auto pb-1 sm:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <span className="text-[11px] sm:text-xs text-wk-on-surface-variant font-medium shrink-0 mr-1">
               Periode:
             </span>
             {(
@@ -434,7 +425,7 @@ function TransactionsPage() {
                 key={item.key}
                 type="button"
                 onClick={() => handlePeriodChange(item.key)}
-                className={`px-wk-sm py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer shrink-0 ${
                   period === item.key && !customDate
                     ? 'bg-wk-primary text-wk-on-primary'
                     : 'bg-wk-surface text-wk-on-surface-variant hover:bg-wk-surface-container-high hover:text-wk-on-surface'
@@ -448,20 +439,20 @@ function TransactionsPage() {
 
         {/* Feedback Alert if Error */}
         {errorMessage && (
-          <div className="p-wk-md bg-wk-error-container text-wk-error rounded-xl flex items-center gap-wk-sm text-sm">
-            <AlertCircle size={18} className="shrink-0" />
+          <div className="p-3 sm:p-wk-md bg-wk-error-container text-wk-error rounded-xl flex items-center gap-2 text-xs sm:text-sm">
+            <AlertCircle size={16} className="shrink-0" />
             <span>{errorMessage}</span>
           </div>
         )}
 
-        {/* Transactions Table Container */}
-        <div className="bg-wk-surface-container-low rounded-xl shadow-sm border border-wk-outline-variant/30 overflow-hidden relative">
+        {/* Transactions Container */}
+        <div className="bg-wk-surface-container-low rounded-xl shadow-xs border border-wk-outline-variant/30 overflow-hidden relative">
           {/* Loading Overlay */}
           {isPending && (
             <div className="absolute inset-0 bg-wk-surface/60 backdrop-blur-xs z-10 flex items-center justify-center">
-              <div className="flex items-center gap-wk-sm bg-wk-surface-container-lowest px-wk-lg py-wk-md rounded-xl shadow-lg border border-wk-outline-variant/40">
-                <Loader2 size={20} className="animate-spin text-wk-primary" />
-                <span className="text-sm font-medium text-wk-on-surface">
+              <div className="flex items-center gap-2 bg-wk-surface-container-lowest px-4 py-2.5 rounded-xl shadow-lg border border-wk-outline-variant/40">
+                <Loader2 size={18} className="animate-spin text-wk-primary" />
+                <span className="text-xs sm:text-sm font-medium text-wk-on-surface">
                   Memuat data...
                 </span>
               </div>
@@ -470,14 +461,14 @@ function TransactionsPage() {
 
           {transactions.length === 0 ? (
             /* Empty State */
-            <div className="p-wk-xxl text-center flex flex-col items-center justify-center">
-              <div className="w-16 h-16 rounded-2xl bg-wk-surface-container-high text-wk-on-surface-variant flex items-center justify-center mb-wk-md">
-                <Receipt size={32} />
+            <div className="p-8 sm:p-wk-xxl text-center flex flex-col items-center justify-center">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-wk-surface-container-high text-wk-on-surface-variant flex items-center justify-center mb-3">
+                <Receipt size={28} />
               </div>
-              <h3 className="text-lg font-bold font-wk-heading text-wk-on-surface mb-wk-xxs">
+              <h3 className="text-base sm:text-lg font-bold font-wk-heading text-wk-on-surface mb-1">
                 Tidak ada transaksi
               </h3>
-              <p className="text-sm text-wk-on-surface-variant max-w-sm mb-wk-lg">
+              <p className="text-xs sm:text-sm text-wk-on-surface-variant max-w-sm mb-4">
                 {isFilterActive
                   ? 'Tidak ditemukan transaksi yang cocok dengan kriteria filter atau pencarian Anda.'
                   : 'Belum ada transaksi penjualan yang tercatat di warung ini. Mulai transaksi pertama melalui kasir POS.'}
@@ -486,14 +477,14 @@ function TransactionsPage() {
                 <button
                   type="button"
                   onClick={handleResetFilters}
-                  className="bg-wk-surface-container-high hover:bg-wk-surface-container-highest text-wk-on-surface px-wk-md py-wk-sm rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                  className="bg-wk-surface-container-high hover:bg-wk-surface-container-highest text-wk-on-surface px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer"
                 >
                   Reset Filter
                 </button>
               ) : (
                 <Link
                   to="/pos"
-                  className="bg-wk-primary hover:bg-wk-primary/90 text-wk-on-primary px-wk-md py-wk-sm rounded-lg text-sm font-medium transition-colors flex items-center gap-wk-xs"
+                  className="bg-wk-primary hover:bg-wk-primary/90 text-wk-on-primary px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors flex items-center gap-1.5"
                 >
                   <ShoppingCart size={16} />
                   <span>Buka Kasir POS</span>
@@ -501,88 +492,144 @@ function TransactionsPage() {
               )}
             </div>
           ) : (
-            /* Data Table */
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-wk-surface-container-high text-wk-on-surface-variant text-xs uppercase tracking-wider font-semibold">
-                    <th className="py-wk-md px-wk-lg">Nomor Transaksi</th>
-                    <th className="py-wk-md px-wk-lg">Tanggal & Waktu</th>
-                    <th className="py-wk-md px-wk-lg">Jumlah Item</th>
-                    <th className="py-wk-md px-wk-lg">Total Pembayaran</th>
-                    <th className="py-wk-md px-wk-lg">Status</th>
-                    <th className="py-wk-md px-wk-lg text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-wk-surface-container-high text-sm text-wk-on-surface">
-                  {transactions.map((trx) => (
-                    <tr
-                      key={trx.id}
-                      className="hover:bg-wk-surface-container transition-colors"
-                    >
-                      {/* ID / Nomor Transaksi */}
-                      <td className="py-wk-md px-wk-lg font-semibold text-wk-primary font-mono">
+            <>
+              {/* MOBILE CARD VIEW (< md) */}
+              <div className="block md:hidden divide-y divide-wk-outline-variant/20">
+                {transactions.map((trx) => (
+                  <div key={trx.id} className="p-3.5 space-y-2 hover:bg-wk-surface-container/40 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono font-bold text-xs text-wk-primary">
                         {trx.transactionNumber}
-                      </td>
+                      </span>
+                      <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-medium">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        Selesai
+                      </span>
+                    </div>
 
-                      {/* Tanggal & Waktu */}
-                      <td className="py-wk-md px-wk-lg text-wk-on-surface-variant">
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="text-wk-on-surface-variant text-[11px]">
                         {formatDateTime(trx.createdAt)}
-                      </td>
+                      </div>
+                      <div className="text-wk-on-surface-variant text-[11px]">
+                        {trx.itemCount} item ({trx.totalQuantity} pcs)
+                      </div>
+                    </div>
 
-                      {/* Jumlah Item */}
-                      <td className="py-wk-md px-wk-lg">
-                        <span className="font-medium">{trx.itemCount} item</span>{' '}
-                        <span className="text-xs text-wk-on-surface-variant">
-                          ({trx.totalQuantity} pcs)
-                        </span>
-                      </td>
-
-                      {/* Total */}
-                      <td className="py-wk-md px-wk-lg font-semibold text-wk-on-surface">
-                        {formatRupiah(trx.total)}
-                      </td>
-
-                      {/* Status */}
-                      <td className="py-wk-md px-wk-lg">
-                        <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-wk-sm py-1 rounded-full text-xs font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                          Selesai
-                        </span>
-                      </td>
-
-                      {/* Aksi */}
-                      <td className="py-wk-md px-wk-lg text-right">
-                        <div className="flex items-center justify-end gap-wk-xs">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenDetail(trx.id)}
-                            title="Lihat Detail Transaksi"
-                            className="p-1.5 text-wk-on-surface-variant hover:text-wk-primary hover:bg-wk-surface-container-high rounded-lg transition-colors cursor-pointer"
-                          >
-                            <Eye size={18} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleOpenReceipt(trx.id)}
-                            title="Preview & Cetak Struk"
-                            className="p-1.5 text-wk-on-surface-variant hover:text-wk-primary hover:bg-wk-surface-container-high rounded-lg transition-colors cursor-pointer"
-                          >
-                            <Printer size={18} />
-                          </button>
+                    <div className="flex items-center justify-between pt-1 border-t border-wk-outline-variant/15">
+                      <div>
+                        <div className="text-[10px] text-wk-on-surface-variant">Total Pembayaran</div>
+                        <div className="font-bold text-sm text-wk-on-surface font-wk-heading">
+                          {formatRupiah(trx.total)}
                         </div>
-                      </td>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenDetail(trx.id)}
+                          className="px-2.5 py-1.5 bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-on-surface rounded-lg text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                        >
+                          <Eye size={13} />
+                          <span>Detail</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenReceipt(trx.id)}
+                          className="p-1.5 bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-primary rounded-lg transition-colors cursor-pointer"
+                          title="Cetak Struk"
+                        >
+                          <Printer size={15} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* DESKTOP TABLE VIEW (>= md) */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-wk-surface-container-high text-wk-on-surface-variant text-xs uppercase tracking-wider font-semibold">
+                      <th className="py-3 px-4">Nomor Transaksi</th>
+                      <th className="py-3 px-4">Tanggal & Waktu</th>
+                      <th className="py-3 px-4">Jumlah Item</th>
+                      <th className="py-3 px-4">Total Pembayaran</th>
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4 text-right">Aksi</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-wk-outline-variant/20 text-sm text-wk-on-surface">
+                    {transactions.map((trx) => (
+                      <tr
+                        key={trx.id}
+                        className="hover:bg-wk-surface-container/50 transition-colors"
+                      >
+                        {/* ID / Nomor Transaksi */}
+                        <td className="py-3.5 px-4 font-semibold text-wk-primary font-mono text-xs">
+                          {trx.transactionNumber}
+                        </td>
+
+                        {/* Tanggal & Waktu */}
+                        <td className="py-3.5 px-4 text-wk-on-surface-variant text-xs">
+                          {formatDateTime(trx.createdAt)}
+                        </td>
+
+                        {/* Jumlah Item */}
+                        <td className="py-3.5 px-4 text-xs">
+                          <span className="font-medium">{trx.itemCount} item</span>{' '}
+                          <span className="text-wk-on-surface-variant">
+                            ({trx.totalQuantity} pcs)
+                          </span>
+                        </td>
+
+                        {/* Total */}
+                        <td className="py-3.5 px-4 font-semibold text-wk-on-surface">
+                          {formatRupiah(trx.total)}
+                        </td>
+
+                        {/* Status */}
+                        <td className="py-3.5 px-4">
+                          <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                            Selesai
+                          </span>
+                        </td>
+
+                        {/* Aksi */}
+                        <td className="py-3.5 px-4 text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenDetail(trx.id)}
+                              title="Lihat Detail Transaksi"
+                              className="p-1.5 text-wk-on-surface-variant hover:text-wk-primary hover:bg-wk-surface-container rounded-lg transition-colors cursor-pointer"
+                            >
+                              <Eye size={17} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenReceipt(trx.id)}
+                              title="Preview & Cetak Struk"
+                              className="p-1.5 text-wk-on-surface-variant hover:text-wk-primary hover:bg-wk-surface-container rounded-lg transition-colors cursor-pointer"
+                            >
+                              <Printer size={17} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
 
           {/* Pagination Footer */}
           {transactions.length > 0 && (
-            <div className="px-wk-lg py-wk-md bg-wk-surface-container border-t border-wk-surface-container-high flex flex-col sm:flex-row items-center justify-between gap-wk-sm">
-              <div className="text-xs text-wk-on-surface-variant">
+            <div className="px-3.5 sm:px-4 py-3 bg-wk-surface-container border-t border-wk-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+              <div className="text-xs text-wk-on-surface-variant text-center sm:text-left">
                 Menampilkan{' '}
                 <span className="font-semibold text-wk-on-surface">
                   {paginationFrom}-{paginationTo}
@@ -594,7 +641,7 @@ function TransactionsPage() {
                 transaksi
               </div>
 
-              <div className="flex items-center gap-wk-xs">
+              <div className="flex items-center gap-1.5">
                 <button
                   type="button"
                   disabled={pagination.page <= 1 || isPending}
@@ -606,47 +653,54 @@ function TransactionsPage() {
                       search,
                     )
                   }
-                  className="px-wk-sm py-1.5 bg-wk-surface text-wk-on-surface-variant rounded-lg text-xs font-medium hover:bg-wk-surface-container-high disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 transition-colors"
+                  className="px-2.5 py-1.5 bg-wk-surface text-wk-on-surface-variant rounded-lg text-xs font-medium hover:bg-wk-surface-container-high disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 transition-colors"
                 >
                   <ChevronLeft size={14} />
                   <span>Sebelumnya</span>
                 </button>
 
-                {/* Page numbers */}
-                {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
-                  .filter((p) => {
-                    if (pagination.totalPages <= 7) return true
-                    if (p === 1 || p === pagination.totalPages) return true
-                    return Math.abs(p - pagination.page) <= 1
-                  })
-                  .map((p, idx, arr) => {
-                    const prev = arr[idx - 1]
-                    const showEllipsis = prev && p - prev > 1
+                {/* Mobile page indicator */}
+                <span className="sm:hidden px-2 text-xs font-medium text-wk-on-surface">
+                  {pagination.page} / {pagination.totalPages}
+                </span>
 
-                    return (
-                      <div key={p} className="flex items-center">
-                        {showEllipsis && (
-                          <span className="px-1 text-xs text-wk-on-surface-variant">
-                            ...
-                          </span>
-                        )}
-                        <button
-                          type="button"
-                          disabled={isPending}
-                          onClick={() =>
-                            loadTransactions(p, period, customDate, search)
-                          }
-                          className={`w-7 h-7 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                            pagination.page === p
-                              ? 'bg-wk-primary text-wk-on-primary font-bold'
-                              : 'bg-wk-surface text-wk-on-surface hover:bg-wk-surface-container-high'
-                          }`}
-                        >
-                          {p}
-                        </button>
-                      </div>
-                    )
-                  })}
+                {/* Desktop Page numbers */}
+                <div className="hidden sm:flex items-center gap-1">
+                  {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                    .filter((p) => {
+                      if (pagination.totalPages <= 7) return true
+                      if (p === 1 || p === pagination.totalPages) return true
+                      return Math.abs(p - pagination.page) <= 1
+                    })
+                    .map((p, idx, arr) => {
+                      const prev = arr[idx - 1]
+                      const showEllipsis = prev && p - prev > 1
+
+                      return (
+                        <div key={p} className="flex items-center">
+                          {showEllipsis && (
+                            <span className="px-1 text-xs text-wk-on-surface-variant">
+                              ...
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            disabled={isPending}
+                            onClick={() =>
+                              loadTransactions(p, period, customDate, search)
+                            }
+                            className={`w-7 h-7 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                              pagination.page === p
+                                ? 'bg-wk-primary text-wk-on-primary font-bold'
+                                : 'bg-wk-surface text-wk-on-surface hover:bg-wk-surface-container-high'
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        </div>
+                      )
+                    })}
+                </div>
 
                 <button
                   type="button"
@@ -661,7 +715,7 @@ function TransactionsPage() {
                       search,
                     )
                   }
-                  className="px-wk-sm py-1.5 bg-wk-surface text-wk-on-surface-variant rounded-lg text-xs font-medium hover:bg-wk-surface-container-high disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 transition-colors"
+                  className="px-2.5 py-1.5 bg-wk-surface text-wk-on-surface-variant rounded-lg text-xs font-medium hover:bg-wk-surface-container-high disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 transition-colors"
                 >
                   <span>Selanjutnya</span>
                   <ChevronRight size={14} />
@@ -674,13 +728,13 @@ function TransactionsPage() {
 
       {/* DETAIL MODAL */}
       {detailModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-wk-md animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-3 sm:p-4 animate-in fade-in duration-150">
           <div className="bg-wk-surface rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-wk-outline-variant/30 flex flex-col max-h-[90vh]">
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-wk-lg py-wk-md bg-wk-surface-container-low border-b border-wk-surface-container-high">
-              <div className="flex items-center gap-wk-xs">
-                <Receipt className="text-wk-primary" size={20} />
-                <h3 className="font-wk-heading text-lg font-bold text-wk-on-surface">
+            <div className="flex items-center justify-between px-4 py-3 bg-wk-surface-container-low border-b border-wk-surface-container-high">
+              <div className="flex items-center gap-2">
+                <Receipt className="text-wk-primary shrink-0" size={18} />
+                <h3 className="font-wk-heading text-base sm:text-lg font-bold text-wk-on-surface truncate">
                   {selectedDetail
                     ? `Detail Transaksi ${selectedDetail.transactionNumber}`
                     : 'Memuat Transaksi...'}
@@ -696,16 +750,16 @@ function TransactionsPage() {
             </div>
 
             {/* Modal Content */}
-            <div className="p-wk-lg space-y-wk-md overflow-y-auto flex-1">
+            <div className="p-3.5 sm:p-5 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
               {isDetailLoading || !selectedDetail ? (
-                <div className="py-wk-xxl flex flex-col items-center justify-center text-wk-on-surface-variant">
-                  <Loader2 size={32} className="animate-spin text-wk-primary mb-wk-sm" />
-                  <p className="text-sm">Mengambil data transaksi...</p>
+                <div className="py-12 flex flex-col items-center justify-center text-wk-on-surface-variant">
+                  <Loader2 size={30} className="animate-spin text-wk-primary mb-2" />
+                  <p className="text-xs sm:text-sm">Mengambil data transaksi...</p>
                 </div>
               ) : (
                 <>
                   {/* Meta Info */}
-                  <div className="flex justify-between items-center text-xs text-wk-on-surface-variant border-b border-wk-surface-container-high pb-wk-sm">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center text-xs text-wk-on-surface-variant border-b border-wk-surface-container-high pb-2.5 gap-1">
                     <div>
                       <span className="font-semibold text-wk-on-surface">
                         {selectedDetail.storeName}
@@ -715,26 +769,26 @@ function TransactionsPage() {
                     <div>{formatDateTime(selectedDetail.createdAt)}</div>
                   </div>
 
-                  {/* Items List (using transaction_items snapshots!) */}
-                  <div className="space-y-wk-sm">
-                    <h4 className="text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
+                  {/* Items List */}
+                  <div className="space-y-2">
+                    <h4 className="text-[11px] sm:text-xs font-semibold text-wk-on-surface-variant uppercase tracking-wider">
                       Daftar Produk ({selectedDetail.items.length} item)
                     </h4>
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {selectedDetail.items.map((item) => (
                         <div
                           key={item.id}
-                          className="flex justify-between items-start text-sm bg-wk-surface-container-low p-wk-sm rounded-lg border border-wk-outline-variant/20"
+                          className="flex justify-between items-start text-xs sm:text-sm bg-wk-surface-container-low p-2.5 rounded-xl border border-wk-outline-variant/20"
                         >
-                          <div>
-                            <div className="font-medium text-wk-on-surface">
+                          <div className="min-w-0 pr-2">
+                            <div className="font-medium text-wk-on-surface truncate">
                               {item.productName}
                             </div>
-                            <div className="text-xs text-wk-on-surface-variant mt-0.5">
+                            <div className="text-[11px] text-wk-on-surface-variant mt-0.5">
                               {item.quantity} × {formatRupiah(item.price)}
                             </div>
                           </div>
-                          <span className="font-semibold text-wk-on-surface">
+                          <span className="font-semibold text-wk-on-surface shrink-0">
                             {formatRupiah(item.subtotal)}
                           </span>
                         </div>
@@ -743,34 +797,34 @@ function TransactionsPage() {
                   </div>
 
                   {/* Payment Breakdown */}
-                  <div className="bg-wk-surface-container p-wk-md rounded-xl space-y-wk-xs border border-wk-outline-variant/30">
-                    <div className="flex justify-between text-sm text-wk-on-surface-variant">
+                  <div className="bg-wk-surface-container p-3 sm:p-4 rounded-xl space-y-2 border border-wk-outline-variant/30">
+                    <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
                       <span>Subtotal</span>
                       <span className="font-medium text-wk-on-surface">
                         {formatRupiah(selectedDetail.total)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm text-wk-on-surface-variant">
+                    <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
                       <span>Status</span>
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700">
                         <CheckCircle2 size={13} />
                         Selesai
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm text-wk-on-surface-variant">
+                    <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
                       <span>Uang Dibayar (Tunai)</span>
                       <span className="font-medium text-wk-on-surface">
                         {formatRupiah(selectedDetail.paidAmount)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm text-wk-on-surface-variant">
+                    <div className="flex justify-between text-xs sm:text-sm text-wk-on-surface-variant">
                       <span>Kembalian</span>
                       <span className="font-medium text-wk-on-surface">
                         {formatRupiah(selectedDetail.changeAmount)}
                       </span>
                     </div>
 
-                    <div className="pt-wk-xs border-t border-wk-outline-variant/40 flex justify-between text-base font-bold text-wk-on-surface">
+                    <div className="pt-2 border-t border-wk-outline-variant/40 flex justify-between text-sm sm:text-base font-bold text-wk-on-surface">
                       <span>Total Akhir</span>
                       <span className="text-wk-primary">
                         {formatRupiah(selectedDetail.total)}
@@ -782,11 +836,11 @@ function TransactionsPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-wk-lg py-wk-md bg-wk-surface-container-low border-t border-wk-surface-container-high flex justify-end gap-wk-sm">
+            <div className="px-4 py-3 bg-wk-surface-container-low border-t border-wk-surface-container-high flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setDetailModalOpen(false)}
-                className="px-wk-md py-wk-sm bg-wk-surface text-wk-on-surface rounded-lg text-sm font-medium hover:bg-wk-surface-container-high transition-colors cursor-pointer border border-wk-outline-variant/40"
+                className="px-3.5 py-2 bg-wk-surface text-wk-on-surface rounded-xl text-xs sm:text-sm font-medium hover:bg-wk-surface-container-high transition-colors cursor-pointer border border-wk-outline-variant/40"
               >
                 Tutup
               </button>
@@ -798,9 +852,9 @@ function TransactionsPage() {
                     setReceiptDetail(selectedDetail)
                     setReceiptModalOpen(true)
                   }}
-                  className="px-wk-md py-wk-sm bg-wk-primary text-wk-on-primary rounded-lg text-sm font-medium hover:bg-wk-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
+                  className="px-3.5 py-2 bg-wk-primary text-wk-on-primary rounded-xl text-xs sm:text-sm font-medium hover:bg-wk-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
-                  <Printer size={16} />
+                  <Printer size={15} />
                   <span>Cetak Struk</span>
                 </button>
               )}
@@ -811,11 +865,11 @@ function TransactionsPage() {
 
       {/* RECEIPT PREVIEW MODAL */}
       {receiptModalOpen && receiptDetail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-wk-md animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-3 sm:p-4 animate-in fade-in duration-150">
           <div className="bg-wk-surface rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-wk-outline-variant/30 flex flex-col">
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-wk-md py-wk-sm bg-wk-surface-container-low border-b border-wk-surface-container-high">
-              <div className="flex items-center gap-1.5 text-sm font-semibold text-wk-on-surface">
+            <div className="flex items-center justify-between px-3.5 py-2.5 bg-wk-surface-container-low border-b border-wk-surface-container-high">
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-wk-on-surface">
                 <FileText size={16} className="text-wk-primary" />
                 <span>Preview Struk Kasir</span>
               </div>
@@ -829,23 +883,23 @@ function TransactionsPage() {
             </div>
 
             {/* Thermal Printable Receipt Mockup */}
-            <div className="p-wk-md overflow-y-auto max-h-[70vh]">
+            <div className="p-3 overflow-y-auto max-h-[70vh]">
               <div
                 id="printable-receipt"
-                className="bg-white p-wk-lg rounded-xl font-mono text-xs text-gray-800 leading-relaxed border border-dashed border-gray-300 shadow-inner space-y-wk-sm"
+                className="bg-white p-3.5 sm:p-4 rounded-xl font-mono text-[11px] sm:text-xs text-gray-800 leading-relaxed border border-dashed border-gray-300 shadow-inner space-y-2"
               >
                 {/* Store Header */}
                 <div className="text-center space-y-0.5">
-                  <div className="font-bold text-base tracking-wide text-gray-900 uppercase">
+                  <div className="font-bold text-sm sm:text-base tracking-wide text-gray-900 uppercase">
                     {receiptDetail.storeName}
                   </div>
-                  <div className="text-[11px] text-gray-500">
+                  <div className="text-[10px] sm:text-[11px] text-gray-500">
                     Warung POS & Inventory
                   </div>
                 </div>
 
                 {/* Metadata */}
-                <div className="border-t border-dashed border-gray-400 pt-wk-xs text-[11px] space-y-0.5">
+                <div className="border-t border-dashed border-gray-400 pt-1.5 text-[10px] sm:text-[11px] space-y-0.5">
                   <div className="flex justify-between">
                     <span>No:</span>
                     <span className="font-semibold">{receiptDetail.transactionNumber}</span>
@@ -861,12 +915,12 @@ function TransactionsPage() {
                 </div>
 
                 {/* Items */}
-                <div className="border-t border-dashed border-gray-400 pt-wk-xs space-y-1 text-[11px]">
+                <div className="border-t border-dashed border-gray-400 pt-1.5 space-y-1 text-[10px] sm:text-[11px]">
                   {receiptDetail.items.map((item) => (
                     <div key={item.id} className="flex justify-between items-start">
-                      <div className="pr-2">
-                        <div>{item.productName}</div>
-                        <div className="text-gray-500 text-[10px]">
+                      <div className="pr-2 min-w-0">
+                        <div className="truncate">{item.productName}</div>
+                        <div className="text-gray-500 text-[9px] sm:text-[10px]">
                           {item.quantity} × {item.price.toLocaleString('id-ID')}
                         </div>
                       </div>
@@ -878,7 +932,7 @@ function TransactionsPage() {
                 </div>
 
                 {/* Total & Payment */}
-                <div className="border-t border-dashed border-gray-400 pt-wk-xs space-y-1 text-[11px]">
+                <div className="border-t border-dashed border-gray-400 pt-1.5 space-y-1 text-[10px] sm:text-[11px]">
                   <div className="flex justify-between font-bold text-xs pt-0.5">
                     <span>TOTAL</span>
                     <span>{formatRupiah(receiptDetail.total)}</span>
@@ -894,7 +948,7 @@ function TransactionsPage() {
                 </div>
 
                 {/* Footer Note */}
-                <div className="text-center pt-wk-sm border-t border-dashed border-gray-300 text-[10px] text-gray-500 space-y-0.5">
+                <div className="text-center pt-2 border-t border-dashed border-gray-300 text-[9px] sm:text-[10px] text-gray-500 space-y-0.5">
                   <div>Terima Kasih Atas Kunjungan Anda</div>
                   <div>Barang yang dibeli tidak dapat ditukar</div>
                 </div>
@@ -902,18 +956,18 @@ function TransactionsPage() {
             </div>
 
             {/* Modal Footer Actions */}
-            <div className="px-wk-md py-wk-sm bg-wk-surface-container-low border-t border-wk-surface-container-high flex justify-end gap-wk-xs">
+            <div className="px-3.5 py-2.5 bg-wk-surface-container-low border-t border-wk-surface-container-high flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setReceiptModalOpen(false)}
-                className="px-wk-md py-1.5 bg-wk-surface text-wk-on-surface rounded-lg text-xs font-medium hover:bg-wk-surface-container-high transition-colors border border-wk-outline-variant/40 cursor-pointer"
+                className="px-3 py-1.5 bg-wk-surface text-wk-on-surface rounded-xl text-xs font-medium hover:bg-wk-surface-container-high transition-colors border border-wk-outline-variant/40 cursor-pointer"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="px-wk-md py-1.5 bg-wk-primary text-wk-on-primary rounded-lg text-xs font-medium hover:bg-wk-primary/90 transition-colors flex items-center gap-1 cursor-pointer shadow-sm"
+                className="px-3 py-1.5 bg-wk-primary text-wk-on-primary rounded-xl text-xs font-medium hover:bg-wk-primary/90 transition-colors flex items-center gap-1 cursor-pointer shadow-xs"
               >
                 <Printer size={14} />
                 <span>Print Sekarang</span>
