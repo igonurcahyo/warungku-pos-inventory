@@ -536,15 +536,26 @@ function PosPage() {
           <div className="relative">
             <Search
               size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-wk-outline"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-wk-outline pointer-events-none"
             />
             <input
               type="text"
               placeholder="Cari produk..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-3.5 py-2.5 bg-wk-surface-container-low border border-wk-outline-variant rounded-xl text-sm text-wk-on-surface placeholder:text-wk-outline focus:outline-none focus:ring-2 focus:ring-wk-primary/30 focus:border-wk-primary transition-all"
+              className="w-full pl-10 pr-9 py-2.5 bg-wk-surface-container-low border border-wk-outline-variant rounded-xl text-base sm:text-sm text-wk-on-surface placeholder:text-wk-outline focus:outline-none focus:ring-2 focus:ring-wk-primary/30 focus:border-wk-primary transition-all"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-wk-outline hover:text-wk-on-surface rounded-full transition-colors cursor-pointer"
+                title="Hapus pencarian"
+                aria-label="Hapus pencarian"
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
 
           {/* Category Filter — Scrollable on mobile, wrapping on tablet/desktop */}
