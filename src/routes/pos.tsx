@@ -232,6 +232,8 @@ function PosPage() {
           total: result.total,
           qrPayload: result.qrPayload,
         })
+        setCart([])
+        setPaidAmountStr('')
         setIsMobileCartOpen(false)
       }
     } catch (err: any) {
@@ -807,7 +809,7 @@ function PosPage() {
               </div>
               <div className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full mt-1">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
-                <span>Menunggu pembayaran</span>
+                <span>Menunggu Pembayaran</span>
               </div>
             </div>
 
@@ -830,7 +832,7 @@ function PosPage() {
                 ) : (
                   <>
                     <CheckCircle2 size={16} />
-                    <span>Simulasikan Pembayaran</span>
+                    <span>Bayar Sekarang</span>
                   </>
                 )}
               </button>

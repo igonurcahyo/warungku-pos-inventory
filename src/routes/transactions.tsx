@@ -1,5 +1,6 @@
 import { useState, useTransition } from 'react'
-import { createFileRoute, redirect, Link } from '@tanstack/react-router'
+import { createFileRoute, redirect, Link, useRouter } from '@tanstack/react-router'
+import { QRCodeSVG } from 'qrcode.react'
 import { DashboardLayout } from '../components/layout/DashboardLayout'
 import {
   Receipt,
@@ -27,11 +28,19 @@ import {
   getTransactionsFn,
   getTransactionDetailFn,
 } from '@/server/transactions'
+import { simulateQrisPaymentFn } from '@/server/pos'
 import type {
   TransactionListItem,
   TransactionDetail,
   TransactionSummary,
 } from '@/server/transactions'
+
+interface QrisModalData {
+  transactionId: number
+  transactionNumber: string
+  total: number
+  qrPayload: string
+}
 
 export const Route = createFileRoute('/transactions')({
   beforeLoad: async () => {
@@ -89,6 +98,7 @@ function formatDateTime(dateInput: Date | string): string {
 
 function TransactionsPage() {
   const { user, initialData } = Route.useLoaderData()
+  const router = useRouter()
 
   // Transactions & Summary states
   const [transactions, setTransactions] = useState<TransactionListItem[]>(
@@ -109,6 +119,7 @@ function TransactionsPage() {
   // UI States
   const [isPending, startTransition] = useTransition()
   const [errorMessage, setErrorMessage] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
 
   // Modals
   const [selectedDetail, setSelectedDetail] = useState<TransactionDetail | null>(
@@ -121,6 +132,44 @@ function TransactionsPage() {
     null,
   )
   const [receiptModalOpen, setReceiptModalOpen] = useState(false)
+
+  // QRIS Simulation Modal (Lanjutkan Pembayaran)
+  const [qrisModalData, setQrisModalData] = useState<QrisModalData | null>(null)
+  const [isSimulatingQris, setIsSimulatingQris] = useState(false)
+
+  function handleOpenContinueQris(trx: TransactionListItem | TransactionDetail) {
+    setQrisModalData({
+      transactionId: trx.id,
+      transactionNumber: trx.transactionNumber,
+      total: trx.total,
+      qrPayload: `WARUNGKU|${trx.transactionNumber}|${trx.total}`,
+    })
+  }
+
+  async function handleSimulateQris() {
+    if (!qrisModalData || isSimulatingQris) return
+    setIsSimulatingQris(true)
+    setErrorMessage('')
+    setSuccessMsg('')
+
+    try {
+      await simulateQrisPaymentFn({
+        data: {
+          transactionId: qrisModalData.transactionId,
+        },
+      })
+
+      const paidTrxNumber = qrisModalData.transactionNumber
+      setQrisModalData(null)
+      setSuccessMsg(`Pembayaran QRIS untuk transaksi ${paidTrxNumber} berhasil diselesaikan!`)
+      await loadTransactions(pagination.page)
+      router.invalidate()
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Simulasi pembayaran QRIS gagal.')
+    } finally {
+      setIsSimulatingQris(false)
+    }
+  }
 
   // Fetch transactions with current filters
   async function loadTransactions(
@@ -440,6 +489,23 @@ function TransactionsPage() {
           </div>
         </div>
 
+        {/* Feedback Alert if Success */}
+        {successMsg && (
+          <div className="p-3 sm:p-wk-md bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-xl flex items-center justify-between gap-2 text-xs sm:text-sm">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
+              <span>{successMsg}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSuccessMsg('')}
+              className="text-emerald-700 hover:text-emerald-900 cursor-pointer p-0.5 rounded hover:bg-emerald-200/60"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
+
         {/* Feedback Alert if Error */}
         {errorMessage && (
           <div className="p-3 sm:p-wk-md bg-wk-error-container text-wk-error rounded-xl flex items-center gap-2 text-xs sm:text-sm">
@@ -534,7 +600,7 @@ function TransactionsPage() {
                       ) : (
                         <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0">
                           <Clock size={10} className="text-amber-600" />
-                          Menunggu
+                          Menunggu Pembayaran
                         </span>
                       )}
                     </div>
@@ -557,6 +623,16 @@ function TransactionsPage() {
                       </div>
 
                       <div className="flex items-center gap-1.5">
+                        {trx.paymentStatus === 'pending' && trx.paymentMethod === 'qris' && (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenContinueQris(trx)}
+                            className="px-2 py-1.5 bg-wk-primary text-wk-on-primary hover:bg-wk-primary/90 text-xs font-semibold rounded-lg flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+                          >
+                            <QrCode size={12} />
+                            <span>Lanjutkan Pembayaran</span>
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => handleOpenDetail(trx.id)}
@@ -655,14 +731,25 @@ function TransactionsPage() {
                           ) : (
                             <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
                               <Clock size={12} className="text-amber-600" />
-                              Menunggu
+                              Menunggu Pembayaran
                             </span>
                           )}
                         </td>
 
                         {/* Aksi */}
                         <td className="py-3.5 px-4 text-right">
-                          <div className="flex items-center justify-end gap-1">
+                          <div className="flex items-center justify-end gap-1.5">
+                            {trx.paymentStatus === 'pending' && trx.paymentMethod === 'qris' && (
+                              <button
+                                type="button"
+                                onClick={() => handleOpenContinueQris(trx)}
+                                className="px-2.5 py-1.5 bg-wk-primary text-wk-on-primary hover:bg-wk-primary/90 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+                                title="Lanjutkan Pembayaran QRIS"
+                              >
+                                <QrCode size={13} />
+                                <span>Lanjutkan Pembayaran</span>
+                              </button>
+                            )}
                             <button
                               type="button"
                               onClick={() => handleOpenDetail(trx.id)}
@@ -887,7 +974,7 @@ function TransactionsPage() {
                       ) : (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                           <Clock size={12} />
-                          Menunggu
+                          Menunggu Pembayaran
                         </span>
                       )}
                     </div>
@@ -942,6 +1029,20 @@ function TransactionsPage() {
               >
                 Tutup
               </button>
+              {selectedDetail && selectedDetail.paymentStatus === 'pending' && selectedDetail.paymentMethod === 'qris' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const detail = selectedDetail
+                    setDetailModalOpen(false)
+                    handleOpenContinueQris(detail)
+                  }}
+                  className="px-3.5 py-2 bg-wk-primary text-wk-on-primary rounded-xl text-xs sm:text-sm font-semibold hover:bg-wk-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                  <QrCode size={15} />
+                  <span>Lanjutkan Pembayaran</span>
+                </button>
+              )}
               {selectedDetail && (
                 <button
                   type="button"
@@ -950,7 +1051,7 @@ function TransactionsPage() {
                     setReceiptDetail(selectedDetail)
                     setReceiptModalOpen(true)
                   }}
-                  className="px-3.5 py-2 bg-wk-primary text-wk-on-primary rounded-xl text-xs sm:text-sm font-medium hover:bg-wk-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  className="px-3.5 py-2 bg-wk-surface-container-high text-wk-on-surface rounded-xl text-xs sm:text-sm font-medium hover:bg-wk-surface-container-highest transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <Printer size={15} />
                   <span>Cetak Struk</span>
@@ -1057,7 +1158,7 @@ function TransactionsPage() {
                       <div className="flex justify-between text-gray-700">
                         <span>STATUS</span>
                         <span className="font-semibold text-emerald-700">
-                          {receiptDetail.paymentStatus === 'paid' ? 'LUNAS' : 'PENDING'}
+                          {receiptDetail.paymentStatus === 'paid' ? 'LUNAS' : 'MENUNGGU PEMBAYARAN'}
                         </span>
                       </div>
                       <div className="flex justify-between text-gray-700">
@@ -1092,6 +1193,98 @@ function TransactionsPage() {
               >
                 <Printer size={14} />
                 <span>Print Sekarang</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* QRIS SIMULATION MODAL (CONTINUE PAYMENT) */}
+      {qrisModalData && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
+          <div className="bg-wk-surface-container-lowest rounded-2xl shadow-2xl max-w-sm w-full p-4 sm:p-5 relative border border-wk-outline-variant/30 flex flex-col items-center">
+            {/* Close button */}
+            <button
+              onClick={() => {
+                if (!isSimulatingQris) setQrisModalData(null)
+              }}
+              disabled={isSimulatingQris}
+              className="absolute top-3.5 right-3.5 text-wk-on-surface-variant hover:text-wk-on-surface cursor-pointer p-1 rounded-full hover:bg-wk-surface-container disabled:opacity-40"
+              title="Tutup / Batal"
+            >
+              <X size={20} />
+            </button>
+
+            {/* Modal Header */}
+            <div className="text-center mb-3">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-wk-primary/10 text-wk-primary mb-1">
+                <QrCode size={13} />
+                Pembayaran QRIS
+              </span>
+              <h3 className="font-wk-heading text-lg font-bold text-wk-on-surface">
+                {user.store?.name || 'WarungKu'}
+              </h3>
+              <p className="text-xs font-mono text-wk-primary font-semibold">
+                {qrisModalData.transactionNumber}
+              </p>
+            </div>
+
+            {/* QR Code Container */}
+            <div className="p-3.5 bg-white rounded-2xl border-2 border-dashed border-wk-outline-variant/60 shadow-xs flex flex-col items-center justify-center my-1">
+              <QRCodeSVG
+                value={qrisModalData.qrPayload}
+                size={180}
+                level="M"
+                includeMargin={false}
+                className="rounded-lg"
+              />
+              <span className="text-[10px] text-gray-400 font-mono mt-2 text-center tracking-wider uppercase">
+                NMID: ID1020030040050
+              </span>
+            </div>
+
+            {/* Total & Status */}
+            <div className="w-full mt-3 bg-wk-surface-container rounded-xl p-3 text-center space-y-1">
+              <div className="text-xs text-wk-on-surface-variant">Total Tagihan</div>
+              <div className="font-wk-heading text-xl font-bold text-wk-on-surface">
+                {formatRupiah(qrisModalData.total)}
+              </div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full mt-1">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                <span>Menunggu Pembayaran</span>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-center text-wk-on-surface-variant mt-2 px-1">
+              *Hanya untuk visual/simulasi demo, bukan pembayaran QRIS sungguhan.
+            </p>
+
+            {/* Action buttons */}
+            <div className="w-full mt-4 space-y-2">
+              <button
+                onClick={handleSimulateQris}
+                disabled={isSimulatingQris}
+                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSimulatingQris ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Memproses Pembayaran...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={16} />
+                    <span>Bayar Sekarang</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => setQrisModalData(null)}
+                disabled={isSimulatingQris}
+                className="w-full py-2 rounded-xl bg-wk-surface-container hover:bg-wk-surface-container-high text-wk-on-surface text-xs sm:text-sm font-medium transition-colors cursor-pointer border border-wk-outline-variant/30 disabled:opacity-50"
+              >
+                Batal
               </button>
             </div>
           </div>
